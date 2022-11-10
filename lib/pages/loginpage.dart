@@ -48,11 +48,6 @@ class _LoginPageState extends State<LoginPage> {
               ),
               LoginBox(
                 autofill: AutofillHints.email,
-                validator: (value) {
-                  if (value == null) {
-                    'this field can not be empty';
-                  }
-                },
                 controller: emailcontroller,
                 passwordvisibility: false,
                 widthoftextfield: 600,
@@ -64,11 +59,7 @@ class _LoginPageState extends State<LoginPage> {
               ),
               LoginBox(
                   autofill: AutofillHints.newPassword,
-                  validator: (value) {
-                    if (value == null) {
-                      'this field can not be empty';
-                    }
-                  },
+                  
                   controller: password,
                   passwordvisibility: isvisible,
                   placeholder: 'Password',

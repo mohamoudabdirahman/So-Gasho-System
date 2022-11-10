@@ -1,5 +1,3 @@
-
-
 import 'package:flutter/material.dart';
 import 'package:somcable_web_app/colors/Colors.dart';
 
@@ -8,16 +6,18 @@ class LoginBox extends StatelessWidget {
   var placeholdericon;
   var widthoftextfield;
   var autofill;
+  var labeling;
   TextEditingController controller = TextEditingController();
   bool passwordvisibility;
-  var validator;
+  
   LoginBox(
       {Key? key,
       required this.placeholder,
       required this.placeholdericon,
       required this.passwordvisibility,
       required this.controller,
-      required this.validator,
+      
+      this.labeling,
       this.autofill,
       this.widthoftextfield})
       : super(key: key);
@@ -31,19 +31,21 @@ class LoginBox extends StatelessWidget {
         child: AutofillGroup(
           child: TextFormField(
             autofillHints: [autofill],
-            onSaved: (value){},
-            validator: validator,
+            onSaved: (value) {},
+            
             controller: controller,
             obscureText: passwordvisibility,
             decoration: InputDecoration(
+              labelText: labeling,
               fillColor: AppColors().secondcolor,
               filled: true,
               focusColor: AppColors().fifthcolor,
-              focusedBorder:
-                  OutlineInputBorder(borderRadius: BorderRadius.circular(39),
-                  ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(39),
+              ),
               enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: AppColors().fifthcolor, width: 1),
+                  borderSide:
+                      BorderSide(color: AppColors().fifthcolor, width: 1),
                   borderRadius: BorderRadius.circular(39)),
               border: OutlineInputBorder(
                   borderSide:

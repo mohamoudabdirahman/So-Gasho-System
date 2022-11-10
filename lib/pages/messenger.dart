@@ -111,14 +111,18 @@ class _MessengerState extends State<Messenger> {
                       groupBy: ((element) => element['DateTime']),
                       itemBuilder: (context, index) {
                         return Row(
-                          mainAxisAlignment: index.get('SentByMe')
+                          mainAxisAlignment: index.get('sentBy') ==
+                                  namebox.get('UsersName')
                               ? MainAxisAlignment.end
-                              : MainAxisAlignment.start,
+                              : index.get('sentBy') != namebox.get('UsersName')
+                                  ? MainAxisAlignment.start
+                                  : MainAxisAlignment.center,
                           children: [
-                            index.get('SentByMe') == false
+                            index.get('sentBy') != namebox.get('UsersName')
                                 ? Container(
                                     decoration: BoxDecoration(
-                                        color: randomizedColors[Random().nextInt(randomizedColors.length)],
+                                        color: randomizedColors[Random()
+                                            .nextInt(randomizedColors.length)],
                                         shape: BoxShape.circle),
                                     child: Padding(
                                       padding: const EdgeInsets.all(8.0),
@@ -133,25 +137,27 @@ class _MessengerState extends State<Messenger> {
                             Padding(
                               padding: const EdgeInsets.all(8.0),
                               child: Column(
-                                crossAxisAlignment: index.get('SentByMe')
+                                crossAxisAlignment: index.get('sentBy') ==
+                                        namebox.get('UsersName')
                                     ? CrossAxisAlignment.end
                                     : CrossAxisAlignment.start,
                                 children: [
                                   Padding(
                                     padding: const EdgeInsets.all(8.0),
                                     child: Text(
-                                      namebox.get('UsersName'),
+                                      index.get('sentBy'),
                                       style: TextStyle(
-                                        fontWeight: FontWeight.bold
-                                      ),
+                                          fontWeight: FontWeight.bold),
                                     ),
                                   ),
                                   Container(
                                     decoration: BoxDecoration(
-                                      color: index.get('SentByMe')
+                                      color: index.get('sentBy') ==
+                                              namebox.get('UsersName')
                                           ? AppColors().maincolor
                                           : AppColors().greycolor,
-                                      borderRadius: index.get('SentByMe')
+                                      borderRadius: index.get('sentBy') ==
+                                              namebox.get('UsersName')
                                           ? const BorderRadius.only(
                                               topLeft: Radius.circular(20),
                                               bottomLeft: Radius.circular(20),
@@ -175,7 +181,8 @@ class _MessengerState extends State<Messenger> {
                                       child: Text(
                                         '${index.get('Message')}',
                                         style: TextStyle(
-                                            color: index.get('SentByMe') == true
+                                            color: index.get('sentBy') ==
+                                                    namebox.get('UsersName')
                                                 ? AppColors().fifthcolor
                                                 : AppColors().black,
                                             fontSize: 20),
@@ -185,10 +192,11 @@ class _MessengerState extends State<Messenger> {
                                 ],
                               ),
                             ),
-                            index.get('SentByMe')
+                            index.get('sentBy') == namebox.get('UsersName')
                                 ? Container(
                                     decoration: BoxDecoration(
-                                        color: randomizedColors[Random().nextInt(randomizedColors.length)],
+                                        color: randomizedColors[Random()
+                                            .nextInt(randomizedColors.length)],
                                         shape: BoxShape.circle),
                                     child: Padding(
                                       padding: const EdgeInsets.all(8.0),
@@ -205,6 +213,33 @@ class _MessengerState extends State<Messenger> {
                       },
                       groupHeaderBuilder: (element) => SizedBox(),
                       groupSeparatorBuilder: (value) => SizedBox(),
+                    );
+                  }
+                  if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                    return Column(
+                      children: [
+                        Text(
+                          '🙄',
+                          style: TextStyle(fontSize: 35),
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        Text(
+                          'Send a message to say Hi',
+                          style: TextStyle(
+                              fontSize: 25, color: AppColors().maincolor),
+                        ),
+                      ],
+                    );
+                  }
+                  if (snapshot.hasError) {
+                    return Center(
+                      child: Text(
+                        'There is something went wrong!',
+                        style: TextStyle(
+                            fontSize: 35, color: AppColors().maincolor),
+                      ),
                     );
                   }
                   return const Center(
@@ -282,7 +317,8 @@ class _MessengerState extends State<Messenger> {
             : false,
         'Sender': FirebaseAuth.instance.currentUser!.uid,
         'Message': messageController.text,
-        'DateTime': DateTime.now()
+        'DateTime': DateTime.now(),
+        'sentBy': namebox.get('UsersName'),
       });
     }
   }

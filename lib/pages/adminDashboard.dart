@@ -69,7 +69,9 @@ class _AdminDashboardState extends State<AdminDashboard> {
                         height: 150,
                       ),
                       NavigationButtons(
-                        backcolor: currentWindow  == 'Dashboard' ? AppColors().secondcolor : Colors.transparent,
+                        backcolor: currentWindow == 'Dashboard'
+                            ? AppColors().secondcolor
+                            : Colors.transparent,
                         navigationIcon: Icons.dashboard,
                         onpressed: () {
                           setState(() {
@@ -83,7 +85,9 @@ class _AdminDashboardState extends State<AdminDashboard> {
                         navigationtitle: 'Dashboard',
                       ),
                       NavigationButtons(
-                        backcolor: currentWindow  == 'Requests' ? AppColors().secondcolor : Colors.transparent,
+                        backcolor: currentWindow == 'Requests'
+                            ? AppColors().secondcolor
+                            : Colors.transparent,
                         onpressed: () {
                           widget.iswidgetvisible = true;
                           setState(() {
@@ -94,7 +98,9 @@ class _AdminDashboardState extends State<AdminDashboard> {
                         navigationtitle: 'Requests',
                       ),
                       NavigationButtons(
-                        backcolor: currentWindow  == 'Sites' ? AppColors().secondcolor : Colors.transparent,
+                        backcolor: currentWindow == 'Sites'
+                            ? AppColors().secondcolor
+                            : Colors.transparent,
                         onpressed: () {
                           widget.iswidgetvisible = true;
                           setState(() {
@@ -105,7 +111,9 @@ class _AdminDashboardState extends State<AdminDashboard> {
                         navigationtitle: 'Sites',
                       ),
                       NavigationButtons(
-                        backcolor: currentWindow  == 'messenger' ? AppColors().secondcolor : Colors.transparent,
+                        backcolor: currentWindow == 'messenger'
+                            ? AppColors().secondcolor
+                            : Colors.transparent,
                         onpressed: () {
                           widget.iswidgetvisible = true;
                           setState(() {
@@ -116,7 +124,9 @@ class _AdminDashboardState extends State<AdminDashboard> {
                         navigationtitle: 'Messages',
                       ),
                       NavigationButtons(
-                        backcolor: currentWindow  == 'users' ? AppColors().secondcolor : Colors.transparent,
+                        backcolor: currentWindow == 'users'
+                            ? AppColors().secondcolor
+                            : Colors.transparent,
                         onpressed: () {
                           widget.iswidgetvisible = true;
                           setState(() {
@@ -127,12 +137,13 @@ class _AdminDashboardState extends State<AdminDashboard> {
                         navigationtitle: 'Users',
                       ),
                       NavigationButtons(
-                        backcolor: currentWindow  == 'Settings' ? AppColors().secondcolor : Colors.transparent,
+                        backcolor: currentWindow == 'Settings'
+                            ? AppColors().secondcolor
+                            : Colors.transparent,
                         onpressed: () {
                           widget.iswidgetvisible = true;
                           setState(() {
                             currentWindow = 'Settings';
-                            
                           });
                         },
                         navigationIcon: Icons.settings,
@@ -151,7 +162,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
                     },
                     child: Container(
                         alignment: Alignment.center,
-                        width: 150,
+                        width: 120,
                         decoration: BoxDecoration(
                             color: AppColors().maincolor,
                             borderRadius: BorderRadius.circular(50),
@@ -190,6 +201,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
                                         Container(
                                           alignment: Alignment.centerLeft,
                                           width: 1600,
+                                          
                                           child: Row(
                                             mainAxisAlignment:
                                                 MainAxisAlignment.end,
