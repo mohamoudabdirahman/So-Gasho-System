@@ -56,7 +56,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   LoginBox(
-                    autofill: AutofillHints.name,
+                      autofill: AutofillHints.name,
                       controller: firstname,
                       passwordvisibility: false,
                       widthoftextfield: 292,
@@ -66,7 +66,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
                         color: AppColors().fifthcolor,
                       )),
                   LoginBox(
-                    autofill: AutofillHints.name,
+                      autofill: AutofillHints.name,
                       controller: lastname,
                       passwordvisibility: false,
                       widthoftextfield: 292,
@@ -117,8 +117,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
                 ],
               ),
               LoginBox(
-                autofill: AutofillHints.email,
-                 
+                  autofill: AutofillHints.email,
                   controller: email,
                   passwordvisibility: false,
                   widthoftextfield: 600,
@@ -128,8 +127,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
                     color: AppColors().fifthcolor,
                   )),
               LoginBox(
-                autofill: AutofillHints.username,
-                
+                  autofill: AutofillHints.username,
                   controller: username,
                   passwordvisibility: false,
                   widthoftextfield: 600,
@@ -146,7 +144,8 @@ class _RegistrationPageState extends State<RegistrationPage> {
                     FlutterPwValidator(
                       width: 292,
                       height: 50,
-                      minLength: 8,
+                      minLength: 10,
+                      numericCharCount: 10,
                       controller: username,
                       onSuccess: () {
                         setState(() {
@@ -158,14 +157,12 @@ class _RegistrationPageState extends State<RegistrationPage> {
                           usernamevalidator = false;
                         });
                       },
-                      normalCharCount: 3,
                     ),
                   ],
                 ),
               ),
               LoginBox(
-                autofill: AutofillHints.password,
-               
+                  autofill: AutofillHints.password,
                   controller: password,
                   passwordvisibility: isvisible,
                   widthoftextfield: 600,
@@ -322,7 +319,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
               );
             });
 
-        firebaseAuth
+        await firebaseAuth
             .createUserWithEmailAndPassword(email: email, password: password)
             .then((value) {
           postingdata();
@@ -350,8 +347,9 @@ class _RegistrationPageState extends State<RegistrationPage> {
     userModel.firstname = firstname.text;
     userModel.lastname = lastname.text;
     userModel.email = email.text;
-    userModel.username = username.text;
+    userModel.phonenumber = username.text;
     userModel.role = roles;
+    userModel.isdisabled = false;
     await FirebaseFirestore.instance
         .collection('Users')
         .doc(user!.uid)

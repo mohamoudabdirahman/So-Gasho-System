@@ -147,7 +147,8 @@ class _MessengerState extends State<Messenger> {
                                     child: Text(
                                       index.get('sentBy'),
                                       style: TextStyle(
-                                          fontWeight: FontWeight.bold),
+                                          fontWeight: FontWeight.bold,
+                                          color: AppColors().black),
                                     ),
                                   ),
                                   Container(
@@ -232,14 +233,18 @@ class _MessengerState extends State<Messenger> {
                         ),
                       ],
                     );
-                  }
-                  if (snapshot.hasError) {
+                  } else if (snapshot.hasError) {
                     return Center(
                       child: Text(
                         'There is something went wrong!',
                         style: TextStyle(
                             fontSize: 35, color: AppColors().maincolor),
                       ),
+                    );
+                  } else if (snapshot.connectionState ==
+                      ConnectionState.waiting) {
+                    return Center(
+                      child: CircularProgressIndicator(),
                     );
                   }
                   return const Center(
@@ -256,8 +261,10 @@ class _MessengerState extends State<Messenger> {
               Container(
                 width: 1400,
                 child: TextField(
+                style: TextStyle(color: AppColors().secondcolor),
                   controller: messageController,
                   decoration: InputDecoration(
+                    
                       filled: false,
                       focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(100),
@@ -310,7 +317,8 @@ class _MessengerState extends State<Messenger> {
 
   sendingmessage() async {
     if (messageController.text.isNotEmpty) {
-      await FirebaseFirestore.instance.collection('Messages').doc().set({
+      String? docid = FirebaseFirestore.instance.collection('Messages').doc().id;
+      await FirebaseFirestore.instance.collection('Messages').doc(docid).set({
         'SentByMe': FirebaseAuth.instance.currentUser!.uid ==
                 FirebaseAuth.instance.currentUser!.uid
             ? true
@@ -319,6 +327,7 @@ class _MessengerState extends State<Messenger> {
         'Message': messageController.text,
         'DateTime': DateTime.now(),
         'sentBy': namebox.get('UsersName'),
+        'doc' :docid
       });
     }
   }

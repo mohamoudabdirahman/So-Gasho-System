@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:somcable_web_app/colors/Colors.dart';
 
 class Personalization extends StatefulWidget {
@@ -9,23 +10,14 @@ class Personalization extends StatefulWidget {
 }
 
 class _PersonalizationState extends State<Personalization> {
+  bool darkmode = false;
+  Box darkmodebox = Hive.box('darkmode');
   @override
   Widget build(BuildContext context) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
-        Row(
-          children: [
-            Text(
-              'Dark Mode',
-              style: TextStyle(fontSize: 24, color: AppColors().black),
-            ),
-            SizedBox(
-              width: 225,
-            ),
-            Switch(value: true, onChanged: (value) {})
-          ],
-        ),
+
         SizedBox(
           height: 20,
         ),
@@ -46,10 +38,7 @@ class _PersonalizationState extends State<Personalization> {
             child: Padding(
               padding: const EdgeInsets.all(50),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                ]
-              ),
+                  crossAxisAlignment: CrossAxisAlignment.start, children: []),
             ),
           ),
         )

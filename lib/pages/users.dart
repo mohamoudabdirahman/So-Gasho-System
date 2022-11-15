@@ -1,4 +1,8 @@
+import 'dart:ui';
+
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:somcable_web_app/colors/Colors.dart';
 
@@ -32,7 +36,6 @@ class _UserDataState extends State<UserData> {
                           color: AppColors().black,
                           fontWeight: FontWeight.bold),
                     ),
-                    
                     Text(
                       'Role',
                       style: TextStyle(
@@ -40,7 +43,6 @@ class _UserDataState extends State<UserData> {
                           color: AppColors().black,
                           fontWeight: FontWeight.bold),
                     ),
-                    
                     Text(
                       'Email',
                       style: TextStyle(
@@ -48,7 +50,14 @@ class _UserDataState extends State<UserData> {
                           color: AppColors().black,
                           fontWeight: FontWeight.bold),
                     ),
-                    
+                    Text(
+                      'Phone Number',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                          fontSize: 16,
+                          color: AppColors().black,
+                          fontWeight: FontWeight.bold),
+                    ),
                     Text(
                       'Options',
                       textAlign: TextAlign.center,
@@ -86,24 +95,25 @@ class _UserDataState extends State<UserData> {
                           itemBuilder: (context, index) {
                             var firstname =
                                 snapshot.data!.docs[index]['First Name'];
-                                 var secondname =
+                            var secondname =
                                 snapshot.data!.docs[index]['Last Name'];
                             var roles = snapshot.data!.docs[index]['role'];
                             var emails = snapshot.data!.docs[index]['Email'];
+                            var phonenumber =
+                                snapshot.data!.docs[index]['PhoneNumber'];
                             return Padding(
                               padding: const EdgeInsets.all(8.0),
                               child: Table(
                                 children: [
                                   TableRow(children: [
                                     SelectableText(
-                                      '$firstname' + ' $secondname',
+                                      '$firstname' ' $secondname',
                                       autofocus: true,
                                       textAlign: TextAlign.start,
                                       style: TextStyle(
                                           fontSize: 16,
                                           color: AppColors().black),
                                     ),
-                                    
                                     SelectableText(
                                       '$roles',
                                       textAlign: TextAlign.start,
@@ -111,7 +121,6 @@ class _UserDataState extends State<UserData> {
                                           fontSize: 16,
                                           color: AppColors().black),
                                     ),
-                                   
                                     SelectableText(
                                       '$emails',
                                       textAlign: TextAlign.start,
@@ -119,9 +128,17 @@ class _UserDataState extends State<UserData> {
                                           fontSize: 16,
                                           color: AppColors().black),
                                     ),
-                                    
+                                    SelectableText(
+                                      '$phonenumber',
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                          fontSize: 16,
+                                          color: AppColors().black),
+                                    ),
                                     IconButton(
-                                        onPressed: () {},
+                                        onPressed: () {
+                                          showoptiondialog(index, snapshot);
+                                        },
                                         icon: Icon(
                                           Icons.more_horiz,
                                           size: 40,
@@ -140,7 +157,7 @@ class _UserDataState extends State<UserData> {
                     );
                   }
 
-                  return Center(
+                  return const Center(
                     child: CircularProgressIndicator(),
                   );
                 })
@@ -148,5 +165,98 @@ class _UserDataState extends State<UserData> {
         ),
       ),
     );
+  }
+
+  showoptiondialog(index, snapshot) {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return Container(
+            decoration: BoxDecoration(borderRadius: BorderRadius.circular(50)),
+            child: AlertDialog(
+              backgroundColor: AppColors().secondcolor,
+              actions: [
+                Align(
+                  alignment: Alignment.center,
+                  child: MaterialButton(
+                    color: AppColors().maincolor,
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: Text(
+                      'cancel',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(color: AppColors().fifthcolor),
+                    ),
+                  ),
+                )
+              ],
+              content: Container(
+                height: 80,
+                width: 100,
+                child: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      TextButton(
+                          style: ButtonStyle(
+                              backgroundColor: MaterialStateProperty.all(
+                                  AppColors().greycolor)),
+                          onPressed: () {
+                            disableuser(index, snapshot);
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.only(left: 48, right: 48),
+                            child: Text(
+                              'Disable User',
+                              style: TextStyle(color: AppColors().black),
+                            ),
+                          )),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      TextButton(
+                          style: ButtonStyle(
+                            backgroundColor: MaterialStateProperty.all(
+                                AppColors().greycolor),
+                          ),
+                          onPressed: () {
+                            deleteuser(index, snapshot);
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.only(left: 50, right: 50),
+                            child: Text('Delete User',
+                                style: TextStyle(color: AppColors().black)),
+                          ))
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          );
+        });
+  }
+
+  void deleteuser(index, snapshot) {
+    try {
+      FirebaseFirestore.instance
+          .collection('Users')
+          .doc(snapshot.data!.docs[index]['uid'])
+          .delete();
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  void disableuser(index, snapshot) {
+    try {
+      FirebaseFirestore.instance
+          .collection('Users')
+          .doc(snapshot.data!.docs[index]['uid'])
+          .update(({'Isdisabled': true}));
+    } catch (e) {
+      print(e);
+    }
   }
 }

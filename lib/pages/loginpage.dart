@@ -24,6 +24,7 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   TextEditingController emailcontroller = TextEditingController();
   TextEditingController password = TextEditingController();
+  var disableduser;
   var loggingbox = Hive.box('CheckingLoggedInUser');
   bool isvisible = true;
   UserModel loggedInuser = UserModel();
@@ -59,7 +60,6 @@ class _LoginPageState extends State<LoginPage> {
               ),
               LoginBox(
                   autofill: AutofillHints.newPassword,
-                  
                   controller: password,
                   passwordvisibility: isvisible,
                   placeholder: 'Password',
@@ -127,10 +127,30 @@ class _LoginPageState extends State<LoginPage> {
             });
         await FirebaseAuth.instance.signInWithEmailAndPassword(
             email: emailcontroller.text, password: password.text);
-        loggingbox.put('Email', emailcontroller.text);
-        Navigator.of(context).pop();
-        Navigator.push(context,
-            MaterialPageRoute(builder: ((context) => AdminDashboard())));
+
+        await FirebaseFirestore.instance
+            .collection('Users')
+            .doc(FirebaseAuth.instance.currentUser!.uid)
+            .get()
+            .then((value) {
+          disableduser = value.get('Isdisabled');
+        });
+
+        if (disableduser == true) {
+          Navigator.of(context).pop();
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        backgroundColor: AppColors().thirdcolor,
+        content: Text('This user has been disabled by the administrator!',
+            style: TextStyle(
+              color: AppColors().fifthcolor,
+            ))));
+          
+        } else {
+          loggingbox.put('Email', emailcontroller.text);
+          Navigator.of(context).pop();
+          Navigator.push(context,
+              MaterialPageRoute(builder: ((context) => AdminDashboard())));
+        }
       } on FirebaseAuthException catch (e) {
         Navigator.of(context).pop();
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(

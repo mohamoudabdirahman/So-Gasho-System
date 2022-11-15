@@ -81,7 +81,7 @@ class _SettingsPageState extends State<SettingsPage> {
                 ),
                 settingTab == 'Personalization'?
                 Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [Personalization()],
                 ): settingTab == 'PersonalInfo' ? PersonalInfo() : settingTab == 'Security' ? Securitypage() : SizedBox()
               ],

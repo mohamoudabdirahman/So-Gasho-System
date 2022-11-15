@@ -47,31 +47,33 @@ class _SplashScreenState extends State<SplashScreen> {
       backgroundColor: AppColors().greycolor,
       body: Padding(
         padding: const EdgeInsets.all(30.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Image.asset(
-              'lib/images/so logo.png',
-              height: 150,
-            ),
-            SizedBox(
-              height: 50,
-            ),
-            Padding(
-              padding: const EdgeInsets.only(left: 700),
-              child: LinearPercentIndicator(
-                barRadius: Radius.circular(50),
-                animation: true,
-                width: 500,
-                animationDuration: 3000,
-                lineHeight: 20,
-                percent: 1.0,
-                backgroundColor: AppColors().secondcolor,
-                progressColor: AppColors().maincolor,
+        child: AbsorbPointer(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Image.asset(
+                'lib/images/so logo.png',
+                height: 150,
               ),
-            )
-          ],
+              SizedBox(
+                height: 50,
+              ),
+              Padding(
+                padding: const EdgeInsets.only(left: 700),
+                child: LinearPercentIndicator(
+                  barRadius: Radius.circular(50),
+                  animation: true,
+                  width: 500,
+                  animationDuration: 3000,
+                  lineHeight: 20,
+                  percent: 1.0,
+                  backgroundColor: AppColors().secondcolor,
+                  progressColor: AppColors().maincolor,
+                ),
+              )
+            ],
+          ),
         ),
       ),
     );

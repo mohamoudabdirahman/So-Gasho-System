@@ -5,9 +5,10 @@ class UserModel {
   String? firstname;
   String? lastname;
   String? email;
-  String? username;
+  String? phonenumber;
   String? password;
   String? role;
+  bool? isdisabled = false;
   FirebaseAuth user = FirebaseAuth.instance;
 
   UserModel(
@@ -15,9 +16,10 @@ class UserModel {
       this.firstname,
       this.lastname,
       this.email,
-      this.username,
+      this.phonenumber,
       this.password,
-      this.role});
+      this.role,
+      this.isdisabled});
 
   factory UserModel.fromMap(map) {
     return UserModel(
@@ -25,9 +27,10 @@ class UserModel {
         firstname: map['First Name'],
         lastname: map['Last Name'],
         email: map['Email'],
-        username: map['Username'],
+        phonenumber: map['PhoneNumber'],
         password: map['password'],
-        role: map['role']);
+        role: map['role'],
+        isdisabled: map ['Isdisabled']);
   }
 
   Map<String, dynamic> tomap() {
@@ -36,9 +39,10 @@ class UserModel {
       'First Name': firstname,
       'Last Name': lastname,
       'Email': email,
-      'Username': username,
+      'PhoneNumber': phonenumber,
       'password': password,
-      'role': role
+      'role': role,
+      'Isdisabled': isdisabled
     };
   }
 }
@@ -51,14 +55,22 @@ class Messages {
   DateTime? time;
   bool? sentbyme;
 
-  Messages({this.message, this.sender, this.time,this.sentbyme});
+  Messages({this.message, this.sender, this.time, this.sentbyme});
 
   factory Messages.fromMap(map) {
     return Messages(
-        message: map['Message'], sender: map['Sender'], time: map['DateTime'],sentbyme: map ['SentByMe']);
+        message: map['Message'],
+        sender: map['Sender'],
+        time: map['DateTime'],
+        sentbyme: map['SentByMe']);
   }
 
   Map<String, dynamic> tomap() {
-    return {'Message': message, 'Sender': sender, 'DateTime': time,'SentByMe': sentbyme};
+    return {
+      'Message': message,
+      'Sender': sender,
+      'DateTime': time,
+      'SentByMe': sentbyme
+    };
   }
 }

@@ -50,6 +50,7 @@ dependencies:
   timer_builder: ^2.0.0
   weather: ^2.0.1
   grouped_list: ^5.1.2
+  awesome_dialog: ^3.0.2
 
 dev_dependencies:
   flutter_test:
@@ -89,10 +90,10 @@ flutter:
   # "family" key with the font family name, and a "fonts" key with a
   # list giving the asset and other descriptors for the font. For
   # example:
-  # fonts:
-  #   - family: Schyler
-  #     fonts:
-  #       - asset: fonts/Schyler-Regular.ttf
+  fonts:
+    - family: Poppins
+      fonts:
+        - asset: assets/Poppins-Regular.ttf
   #       - asset: fonts/Schyler-Italic.ttf
   #         style: italic
   #   - family: Trajan Pro
