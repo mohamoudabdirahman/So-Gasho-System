@@ -112,6 +112,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
                             },
                             navigationtitle: 'Dashboard',
                           ),
+                          userrole.get('UserRole') == 'user' ? SizedBox():
                           NavigationButtons(
                             backcolor: currentWindow == 'Requests'
                                 ? AppColors().secondcolor
@@ -151,6 +152,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
                             navigationIcon: Icons.message,
                             navigationtitle: 'Messages',
                           ),
+                          userrole.get('UserRole') == 'user'?SizedBox():
                           NavigationButtons(
                             backcolor: currentWindow == 'users'
                                 ? AppColors().secondcolor
@@ -541,7 +543,9 @@ class _AdminDashboardState extends State<AdminDashboard> {
                                                                     .withOpacity(
                                                                         0.5))
                                                           ]),
-                                                      child: Column(
+                                                      child: 
+                                                      userrole.get('UserRole') == 'user'? Text('You cannot see this'):
+                                                      Column(
                                                         children: [
                                                           Padding(
                                                             padding:

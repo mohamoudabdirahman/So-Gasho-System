@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -19,6 +20,7 @@ class Messenger extends StatefulWidget {
 class _MessengerState extends State<Messenger> {
   TextEditingController messageController = TextEditingController();
   var namebox = Hive.box('UsersName');
+  var timer;
   List randomizedColors = [
     AppColors().maincolor,
     AppColors().secondcolor,
@@ -34,6 +36,32 @@ class _MessengerState extends State<Messenger> {
     // TODO: implement dispose
     super.dispose();
     messageController.dispose();
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    messengerTimer();
+  }
+
+  void messengerTimer() {
+    timer = Timer.periodic(const Duration(seconds: 86400), (_) {
+      var datas = FirebaseFirestore.instance.collection('Messages').get().then(
+        (value) {
+          for (var document in value.docs) {
+            if (document.data().isNotEmpty) {
+              document.reference.delete();
+            } else {
+              print('there is no data anymore');
+            }
+            break;
+          }
+        },
+      );
+
+      setState(() {});
+    });
   }
 
   @override
@@ -74,14 +102,14 @@ class _MessengerState extends State<Messenger> {
                       children: [
                         Text(
                           'Rank Team',
-                          style: GoogleFonts.poppins(
+                          style: TextStyle(
                               fontSize: 40,
                               color: AppColors().maincolor,
                               fontWeight: FontWeight.bold),
                         ),
                         Text(
                           'Messenger Group Chat',
-                          style: GoogleFonts.montserrat(
+                          style: TextStyle(
                             fontSize: 18,
                             color: AppColors().greycolor,
                           ),
@@ -103,6 +131,22 @@ class _MessengerState extends State<Messenger> {
                     .snapshots(),
                 builder: (BuildContext context,
                     AsyncSnapshot<QuerySnapshot> snapshot) {
+                      if(snapshot.hasData && snapshot.data!.docs.isEmpty){
+                        return Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text('🙄',style: TextStyle(fontSize: 25),),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        Text(
+                          'Send a message to say Hi',
+                          style: TextStyle(
+                              fontSize: 25, color: AppColors().maincolor),
+                        ),
+                      ],
+                    );
+                      }
                   if (snapshot.hasData) {
                     return GroupedListView(
                       reverse: true,
@@ -216,24 +260,7 @@ class _MessengerState extends State<Messenger> {
                       groupSeparatorBuilder: (value) => SizedBox(),
                     );
                   }
-                  if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                    return Column(
-                      children: [
-                        Text(
-                          '🙄',
-                          style: TextStyle(fontSize: 35),
-                        ),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        Text(
-                          'Send a message to say Hi',
-                          style: TextStyle(
-                              fontSize: 25, color: AppColors().maincolor),
-                        ),
-                      ],
-                    );
-                  } else if (snapshot.hasError) {
+                   else if (snapshot.hasError) {
                     return Center(
                       child: Text(
                         'There is something went wrong!',
@@ -261,10 +288,9 @@ class _MessengerState extends State<Messenger> {
               Container(
                 width: 1400,
                 child: TextField(
-                style: TextStyle(color: AppColors().secondcolor),
+                  style: TextStyle(color: AppColors().secondcolor),
                   controller: messageController,
                   decoration: InputDecoration(
-                    
                       filled: false,
                       focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(100),
@@ -317,7 +343,8 @@ class _MessengerState extends State<Messenger> {
 
   sendingmessage() async {
     if (messageController.text.isNotEmpty) {
-      String? docid = FirebaseFirestore.instance.collection('Messages').doc().id;
+      String? docid =
+          FirebaseFirestore.instance.collection('Messages').doc().id;
       await FirebaseFirestore.instance.collection('Messages').doc(docid).set({
         'SentByMe': FirebaseAuth.instance.currentUser!.uid ==
                 FirebaseAuth.instance.currentUser!.uid
@@ -327,7 +354,7 @@ class _MessengerState extends State<Messenger> {
         'Message': messageController.text,
         'DateTime': DateTime.now(),
         'sentBy': namebox.get('UsersName'),
-        'doc' :docid
+        'doc': docid
       });
     }
   }

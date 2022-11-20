@@ -51,6 +51,8 @@ dependencies:
   weather: ^2.0.1
   grouped_list: ^5.1.2
   awesome_dialog: ^3.0.2
+  searchbar_animation: ^0.0.4
+  cross_connectivity: ^3.0.5
 
 dev_dependencies:
   flutter_test:

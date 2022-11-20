@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:somcable_web_app/pages/adminDashboard.dart';
+import 'package:somcable_web_app/pages/emailVerification.dart';
 import 'package:somcable_web_app/pages/loginpage.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:somcable_web_app/pages/splashscreen.dart';

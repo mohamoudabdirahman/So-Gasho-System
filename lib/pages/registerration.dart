@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_pw_validator/flutter_pw_validator.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:somcable_web_app/colors/Colors.dart';
+import 'package:somcable_web_app/pages/emailVerification.dart';
 import 'package:somcable_web_app/pages/loginpage.dart';
 import 'package:somcable_web_app/userDatabase/userModel.dart';
 import 'package:somcable_web_app/utils/Buttons.dart';
@@ -48,7 +49,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Text('Registration',
-                  style: GoogleFonts.poppins(
+                  style: TextStyle(
                       fontSize: 100.0,
                       fontWeight: FontWeight.bold,
                       color: AppColors().fifthcolor)),
@@ -361,6 +362,6 @@ class _RegistrationPageState extends State<RegistrationPage> {
               color: AppColors().fifthcolor,
             ))));
     Navigator.push(
-        context, MaterialPageRoute(builder: (context) => LoginPage()));
+        context, MaterialPageRoute(builder: (context) => EmailVerificationPage()));
   }
 }

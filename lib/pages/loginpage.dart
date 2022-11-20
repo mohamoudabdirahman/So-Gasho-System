@@ -40,7 +40,7 @@ class _LoginPageState extends State<LoginPage> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Text('Login',
-                  style: GoogleFonts.poppins(
+                  style: TextStyle(
                       fontSize: 100.0,
                       fontWeight: FontWeight.bold,
                       color: AppColors().fifthcolor)),
