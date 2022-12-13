@@ -16,6 +16,7 @@ Future<void> main() async {
   await Hive.openBox('Role');
   await Hive.openBox('Darkmode');
   await Hive.openBox('Tempereture');
+  
   if (kIsWeb) {
     await Firebase.initializeApp(
         options: FirebaseOptions(

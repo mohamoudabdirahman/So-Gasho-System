@@ -1,9 +1,8 @@
-import 'dart:ui';
-
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:searchbar_animation/searchbar_animation.dart';
 import 'package:somcable_web_app/colors/Colors.dart';
 
@@ -18,12 +17,18 @@ class _UserDataState extends State<UserData> {
   TextEditingController controller = TextEditingController();
   bool searchbuttontapped = false;
   String searchedName = '';
+  var rolevalue = false;
+  var userolevalue = false;
+  var roles = ['User', 'Admin'];
+  var _groupValue = -1;
+  var userbox = Hive.box('Role');
+
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(50.0),
       child: Container(
-        width: MediaQuery.of(context).size.width - 620,
+        width: MediaQuery.of(context).size.width - 196,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
@@ -159,6 +164,8 @@ class _UserDataState extends State<UserData> {
                                                 .docs[index]['PhoneNumber'];
                                             var isdisabled = snapshot.data!
                                                 .docs[index]['Isdisabled'];
+                                            var userId = snapshot
+                                                .data!.docs[index]['uid'];
                                             return Padding(
                                               padding:
                                                   const EdgeInsets.all(8.0),
@@ -232,7 +239,9 @@ class _UserDataState extends State<UserData> {
                                                           showoptiondialog(
                                                               index,
                                                               snapshot,
-                                                              isdisabled);
+                                                              isdisabled,
+                                                              roles,
+                                                              userId);
                                                         },
                                                         icon: Icon(
                                                           Icons.more_horiz,
@@ -301,6 +310,7 @@ class _UserDataState extends State<UserData> {
                         var role = data['role'];
                         var email = data['Email'];
                         var phonenumber = data['PhoneNumber'];
+                        //var userId = data['uid'];
                         return Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: Container(
@@ -318,7 +328,8 @@ class _UserDataState extends State<UserData> {
                               child: Padding(
                                 padding: const EdgeInsets.all(10.0),
                                 child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
                                   children: [
                                     Text('${name1}' '${name2}'),
                                     Text(role),
@@ -338,76 +349,223 @@ class _UserDataState extends State<UserData> {
             })));
   }
 
-  showoptiondialog(index, snapshot, isdisabled) {
+  showoptiondialog(index, snapshot, isdisabled, role, userid) {
     showDialog(
         context: context,
         builder: (context) {
-          return Container(
-            decoration: BoxDecoration(borderRadius: BorderRadius.circular(50)),
-            child: AlertDialog(
-              backgroundColor: AppColors().secondcolor,
-              actions: [
-                Align(
-                  alignment: Alignment.center,
-                  child: MaterialButton(
-                    color: AppColors().maincolor,
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                    child: Text(
-                      'cancel',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(color: AppColors().fifthcolor),
+          return StatefulBuilder(
+            builder: (context, setState) {
+              return Container(
+                width: 180,
+                height: 300,
+                child: AlertDialog(
+                  backgroundColor: AppColors().secondcolor,
+                  actions: [
+                    Align(
+                      alignment: Alignment.center,
+                      child: MaterialButton(
+                        color: AppColors().maincolor,
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        child: Text(
+                          'cancel',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(color: AppColors().fifthcolor),
+                        ),
+                      ),
+                    )
+                  ],
+                  content: Container(
+                    height: 260,
+                    width: 100,
+                    child: Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Expanded(
+                            child: Column(
+                              //mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Container(
+                                  decoration: BoxDecoration(
+                                    color: Colors.deepPurple,
+                                    borderRadius: BorderRadius.circular(6),
+                                  ),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(10),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Text(
+                                          'This user Is ',
+                                          style: TextStyle(
+                                            fontSize: 18,
+                                            color: AppColors().fifthcolor,
+                                          ),
+                                        ),
+                                        SizedBox(
+                                          width: 2,
+                                        ),
+                                        Text(
+                                          role == 'user'
+                                              ? 'Normal $role'
+                                              : role,
+                                          style: TextStyle(
+                                              fontSize: 18,
+                                              color: Color.fromARGB(
+                                                  255, 255, 255, 255),
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(
+                                  height: 10,
+                                ),
+                                CheckboxListTile(
+                                  activeColor: AppColors().maincolor,
+                                  title: Text(
+                                    "Admin",
+                                    style: TextStyle(
+                                        color: AppColors().fifthcolor,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                  value: rolevalue,
+                                  onChanged: (val) {
+                                    if (rolevalue == false) {
+                                      try {
+                                        FirebaseFirestore.instance
+                                            .collection('Users')
+                                            .doc(userid)
+                                            .update({'role': 'admin'});
+                                      } on Exception catch (e) {
+                                        print(e.toString());
+                                      }
+                                      setState(() {
+                                        rolevalue = val!;
+                                      });
+                                      setState(() {
+  userbox.put('UserRole', 'admin');
+});
+                                    }
+                                    if (rolevalue == true) {
+                                      setState(() {
+                                        rolevalue = val!;
+                                      });
+                                    }
+                                    if (userolevalue == true) {
+                                      try {
+                                        FirebaseFirestore.instance
+                                            .collection('Users')
+                                            .doc(userid)
+                                            .update({'role': 'user'});
+                                      } on Exception catch (e) {
+                                        print(e.toString());
+                                      }
+                                      setState(() {
+                                        rolevalue = false;
+                                      });
+                                      setState(() {
+  userbox.put('UserRole', 'user');
+});
+                                    }
+                                  },
+                                ),
+                                SizedBox(
+                                  height: 10,
+                                ),
+                                CheckboxListTile(
+                                  title: Text("User"),
+                                  value: userolevalue,
+                                  onChanged: (val) {
+                                    if (userolevalue == false) {
+                                      try {
+                                        FirebaseFirestore.instance
+                                            .collection('Users')
+                                            .doc(userid)
+                                            .update({'role': 'user'});
+                                      } on Exception catch (e) {
+                                        print(e.toString());
+                                      }
+                                      setState(() {
+                                        userolevalue = val!;
+                                      });
+                                      setState(() {
+  userbox.put('UserRole', 'user');
+});
+                                    }
+                                    if (userolevalue == true) {
+                                      setState(() {
+                                        userolevalue = val!;
+                                      });
+                                    }
+                                    if (rolevalue == true) {
+                                      try {
+                                        FirebaseFirestore.instance
+                                            .collection('Users')
+                                            .doc(userid)
+                                            .update({'role': 'admin'});
+                                      } on Exception catch (e) {
+                                        print(e.toString());
+                                      }
+                                      setState(() {
+                                        userolevalue = false;
+                                      });
+                                      setState(() {
+  userbox.put('UserRole', 'admin');
+});
+                                    }
+                                  },
+                                ),
+                              ],
+                            ),
+                          ),
+                          TextButton(
+                              style: ButtonStyle(
+                                  backgroundColor: MaterialStateProperty.all(
+                                      AppColors().greycolor)),
+                              onPressed: () {
+                                disableuser(index, snapshot, isdisabled);
+                              },
+                              child: Padding(
+                                padding:
+                                    const EdgeInsets.only(left: 48, right: 48),
+                                child: Text(
+                                  isdisabled == true
+                                      ? 'Enable User'
+                                      : 'Disable User',
+                                  style: TextStyle(color: AppColors().black),
+                                ),
+                              )),
+                          SizedBox(
+                            height: 10,
+                          ),
+                          TextButton(
+                              style: ButtonStyle(
+                                backgroundColor: MaterialStateProperty.all(
+                                    AppColors().greycolor),
+                              ),
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                                deleteuser(index, snapshot);
+                              },
+                              child: Padding(
+                                padding:
+                                    const EdgeInsets.only(left: 50, right: 50),
+                                child: Text('Delete User',
+                                    style: TextStyle(color: AppColors().black)),
+                              ))
+                        ],
+                      ),
                     ),
                   ),
-                )
-              ],
-              content: Container(
-                height: 80,
-                width: 100,
-                child: Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      TextButton(
-                          style: ButtonStyle(
-                              backgroundColor: MaterialStateProperty.all(
-                                  AppColors().greycolor)),
-                          onPressed: () {
-                            disableuser(index, snapshot, isdisabled);
-                          },
-                          child: Padding(
-                            padding: const EdgeInsets.only(left: 48, right: 48),
-                            child: Text(
-                              isdisabled == true
-                                  ? 'Enable User'
-                                  : 'Disable User',
-                              style: TextStyle(color: AppColors().black),
-                            ),
-                          )),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      TextButton(
-                          style: ButtonStyle(
-                            backgroundColor: MaterialStateProperty.all(
-                                AppColors().greycolor),
-                          ),
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                            deleteuser(index, snapshot);
-                          },
-                          child: Padding(
-                            padding: const EdgeInsets.only(left: 50, right: 50),
-                            child: Text('Delete User',
-                                style: TextStyle(color: AppColors().black)),
-                          ))
-                    ],
-                  ),
                 ),
-              ),
-            ),
+              );
+            },
           );
         });
   }
@@ -475,5 +633,15 @@ class _UserDataState extends State<UserData> {
                 color: AppColors().fifthcolor,
               ))));
     }
+  }
+
+  DropdownMenuItem<String> builddropdown(String item) {
+    return DropdownMenuItem(
+        value: item,
+        child: Text(
+          item,
+          style: TextStyle(
+              color: AppColors().fifthcolor, fontWeight: FontWeight.bold),
+        ));
   }
 }

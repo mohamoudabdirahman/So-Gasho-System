@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:somcable_web_app/colors/Colors.dart';
+import 'package:somcable_web_app/pages/Waiting%20List/waitinglist.dart';
 import 'package:somcable_web_app/pages/adminDashboard.dart';
 
 class EmailVerificationPage extends StatefulWidget {
@@ -81,7 +82,7 @@ class _EmailVerificationPageState extends State<EmailVerificationPage> {
     if (isverified) {
       timer?.cancel();
       Navigator.push(
-          context, MaterialPageRoute(builder: ((context) => AdminDashboard())));
+          context, MaterialPageRoute(builder: ((context) => WaitaingList())));
     }
   }
 }

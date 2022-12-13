@@ -80,7 +80,7 @@ class _SplashScreenState extends State<SplashScreen> {
                     barRadius: Radius.circular(50),
                     animation: true,
                     width: 500,
-                    animationDuration: 3000,
+                    animationDuration: 2000,
                     lineHeight: 20,
                     percent: 1.0,
                     backgroundColor: AppColors().secondcolor,

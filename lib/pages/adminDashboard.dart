@@ -10,9 +10,9 @@ import 'package:somcable_web_app/colors/Colors.dart';
 import 'package:somcable_web_app/main.dart';
 import 'package:somcable_web_app/pages/loginpage.dart';
 import 'package:somcable_web_app/pages/messenger.dart';
-import 'package:somcable_web_app/pages/requests.dart';
-import 'package:somcable_web_app/pages/settings.dart';
-import 'package:somcable_web_app/pages/sites.dart';
+import 'package:somcable_web_app/pages/RequestsPage/requests.dart';
+import 'package:somcable_web_app/pages/settingstabs/settings.dart';
+import 'package:somcable_web_app/pages/sites/sites.dart';
 import 'package:somcable_web_app/pages/users.dart';
 import 'package:somcable_web_app/userDatabase/userModel.dart';
 import 'package:somcable_web_app/utils/Navigation.dart';
@@ -81,7 +81,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
             children: [
               Container(
                 height: MediaQuery.of(context).size.height,
-                width: MediaQuery.of(context).size.width / 6,
+                width: MediaQuery.of(context).size.width / 20,
                 decoration: BoxDecoration(
                   color: AppColors().maincolor,
                 ),
@@ -94,7 +94,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
                         children: [
                           Image.asset(
                             'lib/images/so logo.png',
-                            height: 150,
+                            height: 50,
                           ),
                           NavigationButtons(
                             backcolor: currentWindow == 'Dashboard'
@@ -110,22 +110,23 @@ class _AdminDashboardState extends State<AdminDashboard> {
                                 });
                               });
                             },
-                            navigationtitle: 'Dashboard',
+                            
                           ),
-                          userrole.get('UserRole') == 'user' ? SizedBox():
-                          NavigationButtons(
-                            backcolor: currentWindow == 'Requests'
-                                ? AppColors().secondcolor
-                                : Colors.transparent,
-                            onpressed: () {
-                              widget.iswidgetvisible = true;
-                              setState(() {
-                                currentWindow = 'Requests';
-                              });
-                            },
-                            navigationIcon: Icons.request_quote,
-                            navigationtitle: 'Requests',
-                          ),
+                          userrole.get('UserRole') == 'user'
+                              ? SizedBox()
+                              : NavigationButtons(
+                                  backcolor: currentWindow == 'Requests'
+                                      ? AppColors().secondcolor
+                                      : Colors.transparent,
+                                  onpressed: () {
+                                    widget.iswidgetvisible = true;
+                                    setState(() {
+                                      currentWindow = 'Requests';
+                                    });
+                                  },
+                                  navigationIcon: Icons.request_quote,
+                                  
+                                ),
                           NavigationButtons(
                             backcolor: currentWindow == 'Sites'
                                 ? AppColors().secondcolor
@@ -137,7 +138,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
                               });
                             },
                             navigationIcon: Icons.cell_tower,
-                            navigationtitle: 'Sites',
+                            
                           ),
                           NavigationButtons(
                             backcolor: currentWindow == 'messenger'
@@ -150,22 +151,23 @@ class _AdminDashboardState extends State<AdminDashboard> {
                               });
                             },
                             navigationIcon: Icons.message,
-                            navigationtitle: 'Messages',
+                            
                           ),
-                          userrole.get('UserRole') == 'user'?SizedBox():
-                          NavigationButtons(
-                            backcolor: currentWindow == 'users'
-                                ? AppColors().secondcolor
-                                : Colors.transparent,
-                            onpressed: () {
-                              widget.iswidgetvisible = true;
-                              setState(() {
-                                currentWindow = 'users';
-                              });
-                            },
-                            navigationIcon: Icons.person_search,
-                            navigationtitle: 'Users',
-                          ),
+                          userrole.get('UserRole') == 'user'
+                              ? SizedBox()
+                              : NavigationButtons(
+                                  backcolor: currentWindow == 'users'
+                                      ? AppColors().secondcolor
+                                      : Colors.transparent,
+                                  onpressed: () {
+                                    widget.iswidgetvisible = true;
+                                    setState(() {
+                                      currentWindow = 'users';
+                                    });
+                                  },
+                                  navigationIcon: Icons.person_search,
+                                  
+                                ),
                           NavigationButtons(
                             backcolor: currentWindow == 'Settings'
                                 ? AppColors().secondcolor
@@ -177,7 +179,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
                               });
                             },
                             navigationIcon: Icons.settings,
-                            navigationtitle: 'Settings',
+                           
                           ),
                         ],
                       ),
@@ -235,7 +237,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
                                               width: MediaQuery.of(context)
                                                       .size
                                                       .width -
-                                                  320 / 1,
+                                                  96 / 1,
                                               child: Row(
                                                 mainAxisAlignment:
                                                     MainAxisAlignment.end,
@@ -475,6 +477,9 @@ class _AdminDashboardState extends State<AdminDashboard> {
                                                                                 ],
                                                                               );
                                                                             }
+                                                                            if (!snapshot.hasData) {
+                                                                              return Text('something went wrong!');
+                                                                            }
                                                                             return CircularProgressIndicator();
                                                                           })
                                                                       : Row(
@@ -543,189 +548,172 @@ class _AdminDashboardState extends State<AdminDashboard> {
                                                                     .withOpacity(
                                                                         0.5))
                                                           ]),
-                                                      child: 
-                                                      userrole.get('UserRole') == 'user'? Text('You cannot see this'):
-                                                      Column(
-                                                        children: [
-                                                          Padding(
-                                                            padding:
-                                                                const EdgeInsets
-                                                                    .all(46.0),
-                                                            child: Row(
-                                                              mainAxisAlignment:
-                                                                  MainAxisAlignment
-                                                                      .spaceBetween,
+                                                      child: userrole.get(
+                                                                  'UserRole') ==
+                                                              'user'
+                                                          ? Text(
+                                                              'You cannot see this')
+                                                          : Column(
                                                               children: [
-                                                                Text(
-                                                                  'Registered Users',
-                                                                  style: TextStyle(
-                                                                      fontSize:
-                                                                          21,
-                                                                      color: AppColors()
-                                                                          .black,
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .bold),
-                                                                ),
-                                                                ClipRRect(
-                                                                  borderRadius:
-                                                                      BorderRadius
-                                                                          .circular(
-                                                                              17),
-                                                                  child:
-                                                                      MaterialButton(
-                                                                    onPressed:
-                                                                        () {
-                                                                      setState(
-                                                                          () {
-                                                                        currentWindow =
-                                                                            'users';
-                                                                      });
-                                                                    },
-                                                                    color: AppColors()
-                                                                        .secondcolor,
-                                                                    minWidth:
-                                                                        130,
-                                                                    child: Text(
-                                                                      'View All',
-                                                                      style: TextStyle(
+                                                                Padding(
+                                                                  padding:
+                                                                      const EdgeInsets
+                                                                              .all(
+                                                                          46.0),
+                                                                  child: Row(
+                                                                    mainAxisAlignment:
+                                                                        MainAxisAlignment
+                                                                            .spaceBetween,
+                                                                    children: [
+                                                                      Text(
+                                                                        'Registered Users',
+                                                                        style: TextStyle(
+                                                                            fontSize:
+                                                                                21,
+                                                                            color:
+                                                                                AppColors().black,
+                                                                            fontWeight: FontWeight.bold),
+                                                                      ),
+                                                                      ClipRRect(
+                                                                        borderRadius:
+                                                                            BorderRadius.circular(17),
+                                                                        child:
+                                                                            MaterialButton(
+                                                                          onPressed:
+                                                                              () {
+                                                                            setState(() {
+                                                                              currentWindow = 'users';
+                                                                            });
+                                                                          },
                                                                           color:
-                                                                              AppColors().fifthcolor),
-                                                                    ),
+                                                                              AppColors().secondcolor,
+                                                                          minWidth:
+                                                                              130,
+                                                                          child:
+                                                                              Text(
+                                                                            'View All',
+                                                                            style:
+                                                                                TextStyle(color: AppColors().fifthcolor),
+                                                                          ),
+                                                                        ),
+                                                                      )
+                                                                    ],
                                                                   ),
-                                                                )
+                                                                ),
+                                                                Divider(
+                                                                  height: 2,
+                                                                  color: AppColors()
+                                                                      .greycolor,
+                                                                ),
+                                                                Padding(
+                                                                    padding: const EdgeInsets
+                                                                            .only(
+                                                                        left:
+                                                                            46,
+                                                                        top: 20,
+                                                                        right:
+                                                                            46,
+                                                                        bottom:
+                                                                            20),
+                                                                    child:
+                                                                        Table(
+                                                                      children: [
+                                                                        TableRow(
+                                                                            children: [
+                                                                              Text(
+                                                                                'Full Name',
+                                                                                style: TextStyle(fontSize: 16, color: AppColors().black, fontWeight: FontWeight.bold),
+                                                                              ),
+                                                                              Text(
+                                                                                'Role',
+                                                                                style: TextStyle(fontSize: 16, color: AppColors().black, fontWeight: FontWeight.bold),
+                                                                              ),
+                                                                              Text(
+                                                                                'Email',
+                                                                                style: TextStyle(fontSize: 16, color: AppColors().black, fontWeight: FontWeight.bold),
+                                                                              ),
+                                                                              Text(
+                                                                                'Phone Number',
+                                                                                textAlign: TextAlign.center,
+                                                                                style: TextStyle(fontSize: 16, color: AppColors().black, fontWeight: FontWeight.bold),
+                                                                              ),
+                                                                            ])
+                                                                      ],
+                                                                    )),
+                                                                Divider(
+                                                                  height: 2,
+                                                                  color: AppColors()
+                                                                      .greycolor,
+                                                                ),
+                                                                StreamBuilder(
+                                                                    stream: FirebaseFirestore
+                                                                        .instance
+                                                                        .collection(
+                                                                            'Users')
+                                                                        .snapshots(),
+                                                                    builder: (BuildContext
+                                                                            context,
+                                                                        AsyncSnapshot<QuerySnapshot>
+                                                                            snapshot) {
+                                                                      if (snapshot
+                                                                          .hasData) {
+                                                                        print(
+                                                                            'I have data');
+                                                                        return Expanded(
+                                                                          child: ListView.builder(
+                                                                              itemCount: snapshot.data!.docs.length > 5 ? 5 : snapshot.data!.docs.length,
+                                                                              itemBuilder: (context, index) {
+                                                                                var fullname = snapshot.data!.docs[index]['First Name'];
+                                                                                var roles = snapshot.data!.docs[index]['role'];
+                                                                                var emails = snapshot.data!.docs[index]['Email'];
+                                                                                var phonenumber = snapshot.data!.docs[index]['PhoneNumber'];
+                                                                                return Padding(
+                                                                                  padding: const EdgeInsets.only(left: 46, top: 10, right: 46, bottom: 5),
+                                                                                  child: Table(
+                                                                                    children: [
+                                                                                      TableRow(children: [
+                                                                                        Text(
+                                                                                          '$fullname',
+                                                                                          textAlign: TextAlign.start,
+                                                                                          style: TextStyle(fontSize: 16, color: AppColors().black),
+                                                                                        ),
+                                                                                        Text(
+                                                                                          '$roles',
+                                                                                          textAlign: TextAlign.start,
+                                                                                          style: TextStyle(fontSize: 16, color: AppColors().black),
+                                                                                        ),
+                                                                                        Text(
+                                                                                          '$emails',
+                                                                                          textAlign: TextAlign.start,
+                                                                                          style: TextStyle(fontSize: 16, color: AppColors().black),
+                                                                                        ),
+                                                                                        Text(
+                                                                                          '$phonenumber',
+                                                                                          textAlign: TextAlign.center,
+                                                                                          style: TextStyle(fontSize: 16, color: AppColors().black),
+                                                                                        ),
+                                                                                      ])
+                                                                                    ],
+                                                                                  ),
+                                                                                );
+                                                                              }),
+                                                                        );
+                                                                      }
+                                                                      if (snapshot
+                                                                          .hasError) {
+                                                                        return Center(
+                                                                          child:
+                                                                              Text('There is something wrong!'),
+                                                                        );
+                                                                      }
+
+                                                                      return Center(
+                                                                        child:
+                                                                            CircularProgressIndicator(),
+                                                                      );
+                                                                    })
                                                               ],
                                                             ),
-                                                          ),
-                                                          Divider(
-                                                            height: 2,
-                                                            color: AppColors()
-                                                                .greycolor,
-                                                          ),
-                                                          Padding(
-                                                              padding:
-                                                                  const EdgeInsets
-                                                                          .only(
-                                                                      left: 46,
-                                                                      top: 20,
-                                                                      right: 46,
-                                                                      bottom:
-                                                                          20),
-                                                              child: Table(
-                                                                children: [
-                                                                  TableRow(
-                                                                      children: [
-                                                                        Text(
-                                                                          'Full Name',
-                                                                          style: TextStyle(
-                                                                              fontSize: 16,
-                                                                              color: AppColors().black,
-                                                                              fontWeight: FontWeight.bold),
-                                                                        ),
-                                                                        Text(
-                                                                          'Role',
-                                                                          style: TextStyle(
-                                                                              fontSize: 16,
-                                                                              color: AppColors().black,
-                                                                              fontWeight: FontWeight.bold),
-                                                                        ),
-                                                                        Text(
-                                                                          'Email',
-                                                                          style: TextStyle(
-                                                                              fontSize: 16,
-                                                                              color: AppColors().black,
-                                                                              fontWeight: FontWeight.bold),
-                                                                        ),
-                                                                        Text(
-                                                                          'Phone Number',
-                                                                          textAlign:
-                                                                              TextAlign.center,
-                                                                          style: TextStyle(
-                                                                              fontSize: 16,
-                                                                              color: AppColors().black,
-                                                                              fontWeight: FontWeight.bold),
-                                                                        ),
-                                                                      ])
-                                                                ],
-                                                              )),
-                                                          Divider(
-                                                            height: 2,
-                                                            color: AppColors()
-                                                                .greycolor,
-                                                          ),
-                                                          StreamBuilder(
-                                                              stream: FirebaseFirestore
-                                                                  .instance
-                                                                  .collection(
-                                                                      'Users')
-                                                                  .snapshots(),
-                                                              builder: (BuildContext
-                                                                      context,
-                                                                  AsyncSnapshot<
-                                                                          QuerySnapshot>
-                                                                      snapshot) {
-                                                                if (snapshot
-                                                                    .hasData) {
-                                                                  print(
-                                                                      'I have data');
-                                                                  return Expanded(
-                                                                    child: ListView
-                                                                        .builder(
-                                                                            itemCount: snapshot.data!.docs.length > 5
-                                                                                ? 5
-                                                                                : snapshot.data!.docs.length,
-                                                                            itemBuilder: (context, index) {
-                                                                              var fullname = snapshot.data!.docs[index]['First Name'];
-                                                                              var roles = snapshot.data!.docs[index]['role'];
-                                                                              var emails = snapshot.data!.docs[index]['Email'];
-                                                                              var phonenumber = snapshot.data!.docs[index]['PhoneNumber'];
-                                                                              return Padding(
-                                                                                padding: const EdgeInsets.only(left: 46, top: 10, right: 46, bottom: 5),
-                                                                                child: Table(
-                                                                                  children: [
-                                                                                    TableRow(children: [
-                                                                                      Text(
-                                                                                        '$fullname',
-                                                                                        textAlign: TextAlign.start,
-                                                                                        style: TextStyle(fontSize: 16, color: AppColors().black),
-                                                                                      ),
-                                                                                      Text(
-                                                                                        '$roles',
-                                                                                        textAlign: TextAlign.start,
-                                                                                        style: TextStyle(fontSize: 16, color: AppColors().black),
-                                                                                      ),
-                                                                                      Text(
-                                                                                        '$emails',
-                                                                                        textAlign: TextAlign.start,
-                                                                                        style: TextStyle(fontSize: 16, color: AppColors().black),
-                                                                                      ),
-                                                                                      Text(
-                                                                                        '$phonenumber',
-                                                                                        textAlign: TextAlign.center,
-                                                                                        style: TextStyle(fontSize: 16, color: AppColors().black),
-                                                                                      ),
-                                                                                    ])
-                                                                                  ],
-                                                                                ),
-                                                                              );
-                                                                            }),
-                                                                  );
-                                                                }
-                                                                if (snapshot
-                                                                    .hasError) {
-                                                                  return Center(
-                                                                    child: Text(
-                                                                        'There is something wrong!'),
-                                                                  );
-                                                                }
-
-                                                                return Center(
-                                                                  child:
-                                                                      CircularProgressIndicator(),
-                                                                );
-                                                              })
-                                                        ],
-                                                      ),
                                                     ),
                                                   ],
                                                 ),

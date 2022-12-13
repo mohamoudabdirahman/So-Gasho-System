@@ -19,7 +19,7 @@ class _SettingsPageState extends State<SettingsPage> {
     return Padding(
       padding: const EdgeInsets.all(20),
       child: Container(
-          width: 1544,
+          width: MediaQuery.of(context).size.width - 196,
           decoration: BoxDecoration(
               color: AppColors().darkwhite,
               borderRadius: BorderRadius.circular(70),

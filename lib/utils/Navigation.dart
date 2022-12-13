@@ -10,7 +10,7 @@ class NavigationButtons extends StatefulWidget {
   var backcolor;
   NavigationButtons(
       {Key? key,
-      required this.navigationtitle,
+      
       required this.navigationIcon,
       required this.onpressed,
       required this.backcolor})
@@ -56,14 +56,7 @@ class _NavigationButtonsState extends State<NavigationButtons> {
                           ),
                         ),
                       ),
-                      SizedBox(
-                        width: 20,
-                      ),
-                      Text(
-                        widget.navigationtitle!,
-                        style: TextStyle(
-                            fontSize: 20, color: AppColors().fifthcolor),
-                      ),
+                     
                     ],
                   ),
                   SizedBox(

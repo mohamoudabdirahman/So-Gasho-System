@@ -43,7 +43,7 @@ class _PersonalInfoState extends State<PersonalInfo> {
         SizedBox(
           height: 50,
         ),
-        SettingsForm(controller: usernamecontroller, label: 'UserName'),
+        SettingsForm(controller: usernamecontroller, label: 'Phone Number'),
         SizedBox(
           height: 50,
         ),
@@ -116,7 +116,7 @@ class _PersonalInfoState extends State<PersonalInfo> {
               .collection('Users')
               .doc(FirebaseAuth.instance.currentUser!.uid)
               .update(({
-                'Username': usernamecontroller.text,
+                'PhoneNumber': usernamecontroller.text.toString(),
               }));
         } else if (usernamecontroller.text.isNotEmpty &&
             fnamecontroller.text.isNotEmpty &&
@@ -127,7 +127,7 @@ class _PersonalInfoState extends State<PersonalInfo> {
               .update(({
                 'First Name': fnamecontroller.text,
                 'Last Name': lnamecontroller.text,
-                'Username': usernamecontroller.text
+                'PhoneNumber': usernamecontroller.text.toString(),
               }));
 
           FirebaseFirestore.instance
@@ -177,7 +177,7 @@ class _PersonalInfoState extends State<PersonalInfo> {
               .doc(FirebaseAuth.instance.currentUser!.uid)
               .update(({
                 'First Name': fnamecontroller.text,
-                'Username': usernamecontroller.text,
+                'PhoneNumber': usernamecontroller.text.toString(),
               }));
 
           FirebaseFirestore.instance
@@ -202,7 +202,7 @@ class _PersonalInfoState extends State<PersonalInfo> {
               .doc(FirebaseAuth.instance.currentUser!.uid)
               .update(({
                 'Last Name': lnamecontroller.text,
-                'Username': usernamecontroller.text,
+                'PhoneNumber': usernamecontroller.text.toString(),
               }));
         }
         Navigator.of(context).pop();

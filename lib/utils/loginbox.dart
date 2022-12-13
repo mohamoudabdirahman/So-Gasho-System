@@ -7,16 +7,19 @@ class LoginBox extends StatelessWidget {
   var widthoftextfield;
   var autofill;
   var labeling;
+  FocusNode? focusnode;
+  void Function(String)? onchanges;
   TextEditingController controller = TextEditingController();
   bool passwordvisibility;
-  
+
   LoginBox(
       {Key? key,
       required this.placeholder,
       required this.placeholdericon,
       required this.passwordvisibility,
       required this.controller,
-      
+      this.focusnode,
+      this.onchanges,
       this.labeling,
       this.autofill,
       this.widthoftextfield})
@@ -25,14 +28,15 @@ class LoginBox extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(8.0),
+      padding: EdgeInsets.all(8.0),
       child: Container(
         width: widthoftextfield,
         child: AutofillGroup(
           child: TextFormField(
+            onChanged: onchanges,
+            focusNode: focusnode,
             autofillHints: [autofill],
             onSaved: (value) {},
-            
             controller: controller,
             obscureText: passwordvisibility,
             decoration: InputDecoration(

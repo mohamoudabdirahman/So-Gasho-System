@@ -53,6 +53,9 @@ dependencies:
   awesome_dialog: ^3.0.2
   searchbar_animation: ^0.0.4
   cross_connectivity: ^3.0.5
+  sticky_headers: "^0.3.0"
+  flutter_slidable: ^2.0.0
+  rive: ^0.9.0
 
 dev_dependencies:
   flutter_test:

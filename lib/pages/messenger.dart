@@ -21,6 +21,8 @@ class _MessengerState extends State<Messenger> {
   TextEditingController messageController = TextEditingController();
   var namebox = Hive.box('UsersName');
   var timer;
+  var timers;
+  var istimeout = false;
   List randomizedColors = [
     AppColors().maincolor,
     AppColors().secondcolor,
@@ -42,13 +44,33 @@ class _MessengerState extends State<Messenger> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    messengerTimer();
+
+   // messengerTimer();
+  }
+
+  void mtimer() {
+    var datas = FirebaseFirestore.instance.collection('Messages').get().then(
+      (value) {
+        for (var document in value.docs) {
+          if (document.data().isNotEmpty && istimeout == true) {
+            document.reference.delete();
+            setState(() {
+              istimeout = false;
+            });
+          } else {
+            print('there is no data anymore');
+          }
+          break;
+        }
+      },
+    );
   }
 
   void messengerTimer() {
-    timer = Timer.periodic(const Duration(seconds: 86400), (_) {
+    timer = Timer.periodic(const Duration(seconds: 0), (_) {
       var datas = FirebaseFirestore.instance.collection('Messages').get().then(
         (value) {
+          
           for (var document in value.docs) {
             if (document.data().isNotEmpty) {
               document.reference.delete();
@@ -59,8 +81,9 @@ class _MessengerState extends State<Messenger> {
           }
         },
       );
+     
 
-      setState(() {});
+      //setState(() {});
     });
   }
 
@@ -71,7 +94,7 @@ class _MessengerState extends State<Messenger> {
         Padding(
           padding: const EdgeInsets.all(10.0),
           child: Container(
-            width: 1580,
+            width: MediaQuery.of(context).size.width - 117,
             height: 100,
             decoration: BoxDecoration(
                 color: AppColors().fifthcolor,
@@ -124,18 +147,21 @@ class _MessengerState extends State<Messenger> {
         ),
         Expanded(
           child: Container(
-            width: 1400,
+            width: MediaQuery.of(context).size.width - 117,
             child: StreamBuilder(
                 stream: FirebaseFirestore.instance
                     .collection('Messages')
                     .snapshots(),
                 builder: (BuildContext context,
                     AsyncSnapshot<QuerySnapshot> snapshot) {
-                      if(snapshot.hasData && snapshot.data!.docs.isEmpty){
-                        return Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
+                  if (snapshot.hasData && snapshot.data!.docs.isEmpty) {
+                    return Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text('🙄',style: TextStyle(fontSize: 25),),
+                        Text(
+                          '🙄',
+                          style: TextStyle(fontSize: 25),
+                        ),
                         SizedBox(
                           height: 10,
                         ),
@@ -146,7 +172,7 @@ class _MessengerState extends State<Messenger> {
                         ),
                       ],
                     );
-                      }
+                  }
                   if (snapshot.hasData) {
                     return GroupedListView(
                       reverse: true,
@@ -259,8 +285,7 @@ class _MessengerState extends State<Messenger> {
                       groupHeaderBuilder: (element) => SizedBox(),
                       groupSeparatorBuilder: (value) => SizedBox(),
                     );
-                  }
-                   else if (snapshot.hasError) {
+                  } else if (snapshot.hasError) {
                     return Center(
                       child: Text(
                         'There is something went wrong!',
@@ -282,59 +307,62 @@ class _MessengerState extends State<Messenger> {
         ),
         Padding(
           padding: const EdgeInsets.all(15.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Container(
-                width: 1400,
-                child: TextField(
-                  style: TextStyle(color: AppColors().secondcolor),
-                  controller: messageController,
-                  decoration: InputDecoration(
-                      filled: false,
-                      focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(100),
-                          borderSide: BorderSide(
-                            width: 2,
-                            color: AppColors().maincolor,
-                          )),
-                      enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(100),
-                          borderSide: BorderSide(
-                            width: 2,
-                            color: AppColors().maincolor,
-                          )),
-                      border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(100),
-                          borderSide: BorderSide(
-                            width: 2,
-                            color: AppColors().maincolor,
-                          ))),
-                  onSubmitted: (value) {
-                    setState(() {
-                      sendingmessage();
-                      messageController.clear();
-                    });
-                  },
-                ),
-              ),
-              SizedBox(
-                width: 20,
-              ),
-              Padding(
-                padding: const EdgeInsets.only(bottom: 25),
-                child: IconButton(
-                    onPressed: () {
-                      sendingmessage();
-                      messageController.clear();
+          child: Container(
+            width: MediaQuery.of(context).size.width - 140,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Container(
+                  width: MediaQuery.of(context).size.width - 230,
+                  child: TextField(
+                    style: TextStyle(color: AppColors().secondcolor),
+                    controller: messageController,
+                    decoration: InputDecoration(
+                        filled: false,
+                        focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(100),
+                            borderSide: BorderSide(
+                              width: 2,
+                              color: AppColors().maincolor,
+                            )),
+                        enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(100),
+                            borderSide: BorderSide(
+                              width: 2,
+                              color: AppColors().maincolor,
+                            )),
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(100),
+                            borderSide: BorderSide(
+                              width: 2,
+                              color: AppColors().maincolor,
+                            ))),
+                    onSubmitted: (value) {
+                      setState(() {
+                        sendingmessage();
+                        messageController.clear();
+                      });
                     },
-                    icon: Icon(
-                      Icons.send,
-                      size: 50,
-                      color: AppColors().maincolor,
-                    )),
-              )
-            ],
+                  ),
+                ),
+                SizedBox(
+                  width: 20,
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 25),
+                  child: IconButton(
+                      onPressed: () {
+                        sendingmessage();
+                        messageController.clear();
+                      },
+                      icon: Icon(
+                        Icons.send,
+                        size: 50,
+                        color: AppColors().maincolor,
+                      )),
+                )
+              ],
+            ),
           ),
         ),
       ],

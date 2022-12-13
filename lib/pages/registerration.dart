@@ -1,9 +1,12 @@
+import 'dart:ui';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_pw_validator/flutter_pw_validator.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:rive/rive.dart';
 import 'package:somcable_web_app/colors/Colors.dart';
 import 'package:somcable_web_app/pages/emailVerification.dart';
 import 'package:somcable_web_app/pages/loginpage.dart';
@@ -40,8 +43,28 @@ class _RegistrationPageState extends State<RegistrationPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors().secondcolor,
-      body: SingleChildScrollView(
+      backgroundColor: Colors.white,
+      body: Stack(
+        children: [
+          Positioned(
+                width: MediaQuery.of(context).size.width * 1.7,
+                left: 400,
+                bottom: 20,
+                child: Image.asset('lib/images/Spline.png',fit: BoxFit.fill,)),
+              RiveAnimation.asset("lib/images/shapes.riv",fit: BoxFit.fill,),
+              
+              Container(
+                width: MediaQuery.of(context).size.width,
+                height: MediaQuery.of(context).size.height,
+                child:  BackdropFilter(
+                    child: Container(
+                      decoration: BoxDecoration(
+                          color: Colors.black.withOpacity(0.2),
+                          borderRadius: BorderRadius.circular(20)),
+                    ),
+                    filter: ImageFilter.blur(sigmaX: 50, sigmaY: 50),
+                )),
+          SingleChildScrollView(
         child: Form(
           key: _formkey,
           child: Column(
@@ -132,7 +155,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
                   controller: username,
                   passwordvisibility: false,
                   widthoftextfield: 600,
-                  placeholder: 'username',
+                  placeholder: 'Phone Number',
                   placeholdericon: Icon(
                     Icons.verified_user_rounded,
                     color: AppColors().fifthcolor,
@@ -285,6 +308,8 @@ class _RegistrationPageState extends State<RegistrationPage> {
           ),
         ),
       ),
+        ],
+      )
     );
   }
 
@@ -351,6 +376,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
     userModel.phonenumber = username.text;
     userModel.role = roles;
     userModel.isdisabled = false;
+    userModel.isapproved = 'requested';
     await FirebaseFirestore.instance
         .collection('Users')
         .doc(user!.uid)
@@ -361,7 +387,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
             style: TextStyle(
               color: AppColors().fifthcolor,
             ))));
-    Navigator.push(
-        context, MaterialPageRoute(builder: (context) => EmailVerificationPage()));
+    Navigator.push(context,
+        MaterialPageRoute(builder: (context) => EmailVerificationPage()));
   }
 }
