@@ -62,10 +62,9 @@ class _SecuritypageState extends State<Securitypage> {
     try {
       if (emailreset.text.isNotEmpty) {
         await FirebaseAuth.instance.sendPasswordResetEmail(email: emailreset.text);
-        print('i have sent it');
-      }
 
-      showDialog(
+
+        showDialog(
           context: context,
           barrierDismissible: false,
           builder: (context) {
@@ -101,8 +100,23 @@ class _SecuritypageState extends State<Securitypage> {
               ],
             );
           });
+      }{
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            backgroundColor: AppColors().thirdcolor,
+            content: Text('We need your Email in order to reset your password!',
+                style: TextStyle(
+                  color: AppColors().fifthcolor,
+                ))));
+      }
+
+      
     } on Exception catch (e) {
-      print(e);
+       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            backgroundColor: AppColors().thirdcolor,
+            content: Text(e.toString(),
+                style: TextStyle(
+                  color: AppColors().fifthcolor,
+                ))));
     }
   }
 }

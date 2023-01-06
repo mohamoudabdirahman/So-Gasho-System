@@ -32,27 +32,51 @@ class _PersonalInfoState extends State<PersonalInfo> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
+    return Row(
+
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        SettingsForm(controller: fnamecontroller, label: 'First Name'),
-        SizedBox(
-          height: 50,
+        Padding(
+          padding:
+              const EdgeInsets.only(top: 50, bottom: 50, left: 20, right: 20),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              SettingsForm(controller: fnamecontroller, label: 'First Name'),
+              SizedBox(
+                height: 40,
+              ),
+              SettingsForm(controller: lnamecontroller, label: 'Last Name'),
+              SizedBox(
+                height: 40,
+              ),
+              SettingsForm(
+                  controller: usernamecontroller, label: 'Phone Number'),
+              SizedBox(
+                height: 40,
+              ),
+              MaterialButton(
+                onPressed: () {
+                  updatinginfo();
+                },
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10)),
+                height: 50,
+                minWidth: 600,
+                color: AppColors().maincolor,
+                child: Text(
+                  'Update',
+                  style:
+                      TextStyle(fontSize: 20, color: AppColors().fifthcolor),
+                ),
+              )
+            ],
+          ),
         ),
-        SettingsForm(controller: lnamecontroller, label: 'Last Name'),
-        SizedBox(
-          height: 50,
-        ),
-        SettingsForm(controller: usernamecontroller, label: 'Phone Number'),
-        SizedBox(
-          height: 50,
-        ),
-        Buttons(
-            buttonText: 'Update',
-            buttonColor: AppColors().maincolor,
-            ontap: () {
-              updatinginfo();
-            })
+        // Image.asset(
+        //   'lib/images/cloud.png',
+        //   height: 500,
+        // )
       ],
     );
   }
@@ -100,6 +124,7 @@ class _PersonalInfoState extends State<PersonalInfo> {
               }
             }
           });
+          Navigator.of(context).pop();
         } else if (lnamecontroller.text.isNotEmpty &&
             fnamecontroller.text.isEmpty &&
             usernamecontroller.text.isEmpty) {
@@ -109,6 +134,7 @@ class _PersonalInfoState extends State<PersonalInfo> {
               .update(({
                 'Last Name': lnamecontroller.text,
               }));
+              Navigator.of(context).pop();
         } else if (usernamecontroller.text.isNotEmpty &&
             fnamecontroller.text.isEmpty &&
             lnamecontroller.text.isEmpty) {
@@ -118,6 +144,7 @@ class _PersonalInfoState extends State<PersonalInfo> {
               .update(({
                 'PhoneNumber': usernamecontroller.text.toString(),
               }));
+              Navigator.of(context).pop();
         } else if (usernamecontroller.text.isNotEmpty &&
             fnamecontroller.text.isNotEmpty &&
             lnamecontroller.text.isNotEmpty) {
@@ -144,6 +171,7 @@ class _PersonalInfoState extends State<PersonalInfo> {
               }
             }
           });
+          Navigator.of(context).pop();
         } else if (fnamecontroller.text.isNotEmpty &&
             lnamecontroller.text.isNotEmpty &&
             usernamecontroller.text.isEmpty) {
@@ -169,6 +197,7 @@ class _PersonalInfoState extends State<PersonalInfo> {
               }
             }
           });
+          Navigator.of(context).pop();
         } else if (fnamecontroller.text.isNotEmpty &&
             lnamecontroller.text.isEmpty &&
             usernamecontroller.text.isNotEmpty) {
@@ -194,6 +223,7 @@ class _PersonalInfoState extends State<PersonalInfo> {
               }
             }
           });
+          Navigator.of(context).pop();
         } else if (fnamecontroller.text.isEmpty &&
             lnamecontroller.text.isNotEmpty &&
             usernamecontroller.text.isNotEmpty) {
@@ -257,6 +287,7 @@ class _PersonalInfoState extends State<PersonalInfo> {
                 style: TextStyle(
                   color: AppColors().fifthcolor,
                 ))));
+                Navigator.of(context).pop();
       }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
@@ -265,6 +296,7 @@ class _PersonalInfoState extends State<PersonalInfo> {
               style: TextStyle(
                 color: AppColors().fifthcolor,
               ))));
+              Navigator.of(context).pop();
     }
   }
 }

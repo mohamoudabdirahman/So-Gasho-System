@@ -7,7 +7,7 @@ Box darkmode = Hive.box('darkmode');
 class AppColors {
   Color maincolor = darkmode.get('darkmode') == false
       ? const Color(0xffB91F3B)
-      : Color.fromARGB(255, 120, 128, 50);
+      : Color.fromARGB(181, 163, 199, 214);
 
   Color secondcolor = const Color(0xffF47C2A);
 
@@ -21,7 +21,7 @@ class AppColors {
       : Color.fromARGB(255, 65, 4, 105);
   Color greycolor = darkmode.get('darkmode') == false
       ? const Color(0xffD4D4D4)
-      : Color.fromARGB(255, 139, 155, 2);
+      : Color(0xff0F3460);
   Color black = darkmode.get('darkmode') == false
       ? const Color(0xff070707)
       : const Color(0xffFFFFFF);

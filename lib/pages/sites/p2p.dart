@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:loading_indicator/loading_indicator.dart';
+import 'package:searchbar_animation/searchbar_animation.dart';
 import 'package:somcable_web_app/colors/Colors.dart';
 import 'package:somcable_web_app/utils/siteTexfield.dart';
 
@@ -32,6 +33,9 @@ class _P2pState extends State<P2p> {
   final tilt = TextEditingController();
   final lat = TextEditingController();
   final lon = TextEditingController();
+  final scrollController = ScrollController();
+  //search button controller
+  final controller = TextEditingController();
   var check = false;
   var cancelling = true;
   var isupdating = false;
@@ -39,6 +43,18 @@ class _P2pState extends State<P2p> {
   var sectorfieldvisibilty = false;
   int? selectedIndex;
   var userbox = Hive.box('Role');
+  var stream;
+
+  var searchedName = '';
+
+  bool searchbuttontapped = false;
+
+  @override
+  void initState() {
+    //stream = FirebaseFirestore.instance.collection('P2P').snapshots();
+    // TODO: implement initState
+    super.initState();
+  }
 
   @override
   void dispose() {
@@ -73,6 +89,48 @@ class _P2pState extends State<P2p> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: Padding(
+                      padding: const EdgeInsets.all(20),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          Visibility(
+                            visible: searchbuttontapped,
+                            child: Container(
+                                width: MediaQuery.of(context).size.width - 400,
+                                child: SiteTextfield(
+                                  hinText: 'You can search any P2P site here! by(Site Name)',
+                                    controller: controller,
+                                    onchange: (value) {
+                                      searchedName = value;
+                                      setState(() {
+                                        searchedName = controller.text;
+                                      });
+                                    })),
+                          ),
+                          IconButton(
+                              onPressed: () {
+                                if (searchbuttontapped == false) {
+                                  setState(() {
+                                    searchbuttontapped = true;
+                                  });
+                                } else {
+                                  setState(() {
+                                    searchbuttontapped = false;
+                                  });
+                                }
+                              },
+                              icon: Icon(
+                                  searchbuttontapped
+                                      ? Icons.close
+                                      : Icons.search,
+                                  color: AppColors().secondcolor)),
+                        ],
+                      ),
+                    ),
+                  ),
                   Table(
                     columnWidths: {
                       0: FlexColumnWidth(3),
@@ -506,234 +564,598 @@ class _P2pState extends State<P2p> {
                         }
 
                         if (snapshot.hasData) {
-                          return ListView.builder(
-                              shrinkWrap: true,
-                              itemCount: snapshot.data!.docs.length,
-                              itemBuilder: (context, index) {
-                                var siteName =
-                                    snapshot.data!.docs[index]['SiteName'];
-                                var region =
-                                    snapshot.data!.docs[index]['Region'];
-                                var docid = snapshot.data!.docs[index]['DocId'];
-                                var ssid = snapshot.data!.docs[index]['Ssid'];
-                                var deviceName =
-                                    snapshot.data!.docs[index]['DeviceName'];
-                                var ipadd =
-                                    snapshot.data!.docs[index]['IpAddress'];
-                                var macadd =
-                                    snapshot.data!.docs[index]['MacAddress'];
-                                var pNumber =
-                                    snapshot.data!.docs[index]['PortNumber'];
-                                var wMode =
-                                    snapshot.data!.docs[index]['WirelessMode'];
-                                var vlans = snapshot.data!.docs[index]['Vlan'];
-                                var sMikrotic = snapshot.data!.docs[index]
-                                    ['ServingMikrotic'];
-                                var heights =
-                                    snapshot.data!.docs[index]['Height'];
-                                var azmuths =
-                                    snapshot.data!.docs[index]['Azmuth'];
-                                var tilts = snapshot.data!.docs[index]['Tilt'];
-                                var latt = snapshot.data!.docs[index]['Lat'];
-                                var longitude =
-                                    snapshot.data!.docs[index]['Long'];
-                                return Padding(
-                                  padding: const EdgeInsets.only(left: 0),
-                                  child: Table(
-                                    //border: TableBorder.all(),
-                                    defaultVerticalAlignment:
-                                        TableCellVerticalAlignment.middle,
-                                    columnWidths: {
-                                      0: FlexColumnWidth(3),
-                                      1: FlexColumnWidth(3),
-                                      2: FlexColumnWidth(6),
-                                      3: FlexColumnWidth(3),
-                                      4: FlexColumnWidth(3),
-                                      5: FlexColumnWidth(5),
-                                      6: FlexColumnWidth(2),
-                                      7: FlexColumnWidth(2),
-                                      8: FlexColumnWidth(2),
-                                      9: FlexColumnWidth(3),
-                                      10: FlexColumnWidth(2),
-                                      11: FlexColumnWidth(2),
-                                      12: FlexColumnWidth(2),
-                                      13: FlexColumnWidth(2.8),
-                                      14: FlexColumnWidth(2.8),
-                                      15: FlexColumnWidth(2),
-                                    },
-                                    children: [
-                                      TableRow(
-                                          decoration: BoxDecoration(
-                                              color: snapshot.data!.docs[index]['IsApproved'] == 'Pending' ? Colors.yellowAccent.withAlpha(180) : AppColors().fifthcolor,
-                                              borderRadius:
-                                                  BorderRadius.circular(7),
-                                              boxShadow: [
-                                                BoxShadow(
-                                                    blurRadius: 8,
-                                                    offset: Offset(3, 4),
-                                                    spreadRadius: 5,
-                                                    color: AppColors()
-                                                        .black
-                                                        .withOpacity(0.08))
-                                              ]),
-                                          children: [
-                                            SelectableText(
-                                              '${snapshot.data!.docs[index]['Region']}',
-                                              style: TextStyle(
-                                                  color: AppColors().black),
-                                              textAlign: TextAlign.center,
-                                            ),
-                                            SelectableText(
-                                              '${snapshot.data!.docs[index]['SiteName']}',
-                                              style: TextStyle(
-                                                  color: AppColors().black),
-                                              textAlign: TextAlign.center,
-                                            ),
-                                            SelectableText(
-                                              '${snapshot.data!.docs[index]['DeviceName']}',
-                                              style: TextStyle(
-                                                  color: AppColors().black),
-                                              textAlign: TextAlign.center,
-                                            ),
-                                            SelectableText(
-                                              '${snapshot.data!.docs[index]['MacAddress']}',
-                                              style: TextStyle(
-                                                  color: AppColors().black),
-                                              textAlign: TextAlign.center,
-                                            ),
-                                            SelectableText(
-                                              '${snapshot.data!.docs[index]['IpAddress']}',
-                                              style: TextStyle(
-                                                  color: AppColors().black),
-                                              textAlign: TextAlign.center,
-                                            ),
-                                            SelectableText(
-                                              '${snapshot.data!.docs[index]['Ssid']}',
-                                              style: TextStyle(
-                                                  color: AppColors().black),
-                                              textAlign: TextAlign.center,
-                                            ),
-                                            SelectableText(
-                                              '${snapshot.data!.docs[index]['PortNumber']}',
-                                              style: TextStyle(
-                                                  color: AppColors().black),
-                                              textAlign: TextAlign.center,
-                                            ),
-                                            SelectableText(
-                                              '${snapshot.data!.docs[index]['WirelessMode']}',
-                                              style: TextStyle(
-                                                  color: AppColors().black),
-                                              textAlign: TextAlign.center,
-                                            ),
-                                            SelectableText(
-                                              '${snapshot.data!.docs[index]['Vlan']}',
-                                              style: TextStyle(
-                                                  color: AppColors().black),
-                                              textAlign: TextAlign.center,
-                                            ),
-                                            SelectableText(
-                                              '${snapshot.data!.docs[index]['ServingMikrotic']}',
-                                              style: TextStyle(
-                                                  color: AppColors().black),
-                                              textAlign: TextAlign.center,
-                                            ),
-                                            SelectableText(
-                                              '${snapshot.data!.docs[index]['Height']}',
-                                              style: TextStyle(
-                                                  color: AppColors().black),
-                                              textAlign: TextAlign.center,
-                                            ),
-                                            SelectableText(
-                                              '${snapshot.data!.docs[index]['Azmuth']}',
-                                              style: TextStyle(
-                                                  color: AppColors().black),
-                                              textAlign: TextAlign.center,
-                                            ),
-                                            SelectableText(
-                                              '${snapshot.data!.docs[index]['Tilt']}',
-                                              style: TextStyle(
-                                                  color: AppColors().black),
-                                              textAlign: TextAlign.center,
-                                            ),
-                                            SelectableText(
-                                              '${snapshot.data!.docs[index]['Lat']}',
-                                              style: TextStyle(
-                                                  color: AppColors().black),
-                                              textAlign: TextAlign.center,
-                                            ),
-                                            SelectableText(
-                                              '${snapshot.data!.docs[index]['Long']}',
-                                              style: TextStyle(
-                                                  color: AppColors().black),
-                                              textAlign: TextAlign.center,
-                                            ),
-                                            snapshot.data!.docs[index]['IsApproved'] == 'Pending' ? Padding(
-                                                            padding:
-                                                                const EdgeInsets
-                                                                        .only(
-                                                                    top: 5),
-                                                            child: Container(
-                                                              width: 35,
-                                                              height: 35,
-                                                              child:
-                                                                  Center(
-                                                                    child: LoadingIndicator(
-                                                                colors: [
-                                                                    AppColors()
-                                                                        .maincolor
-                                                                ],
-                                                                indicatorType:
-                                                                      Indicator
-                                                                          .ballRotateChase,
-                                                              ),
-                                                                  ),
-                                                            ),
-                                                          ) :
-                                            IconButton(
-                                                onPressed: () {
-                                                  showDataOptions(
-                                                      docid,
-                                                      index,
-                                                      region,
-                                                      siteName,
-                                                      deviceName,
-                                                      ssid,
-                                                      ipadd,
-                                                      macadd,
-                                                      pNumber,
-                                                      wMode,
-                                                      vlans,
-                                                      sMikrotic,
-                                                      heights,
-                                                      azmuths,
-                                                      tilts,
-                                                      latt,
-                                                      longitude);
+                          return SizedBox(
+                            height: 500,
+                            child: Scrollbar(
+                                trackVisibility: true,
+                                controller: scrollController,
+                                isAlwaysShown: true,
+                                child: searchbuttontapped
+                                    ? ListView.builder(
+
+                                        controller: scrollController,
+                                        shrinkWrap: true,
+                                        itemCount: snapshot.data!.docs.length,
+                                        itemBuilder: ((context, index) {
+                                          var data = snapshot.data?.docs[index]
+                                              .data() as Map<String, dynamic>;
+                                          var siteName = snapshot
+                                              .data!.docs[index]['SiteName'];
+                                          var region = snapshot
+                                              .data!.docs[index]['Region'];
+                                          var docid = snapshot.data!.docs[index]
+                                              ['DocId'];
+                                          var ssid = snapshot.data!.docs[index]
+                                              ['Ssid'];
+                                          var deviceName = snapshot
+                                              .data!.docs[index]['DeviceName'];
+                                          var ipadd = snapshot.data!.docs[index]
+                                              ['IpAddress'];
+                                          var macadd = snapshot
+                                              .data!.docs[index]['MacAddress'];
+                                          var pNumber = snapshot
+                                              .data!.docs[index]['PortNumber'];
+                                          var wMode = snapshot.data!.docs[index]
+                                              ['WirelessMode'];
+                                          var vlans = snapshot.data!.docs[index]
+                                              ['Vlan'];
+                                          var sMikrotic = snapshot.data!
+                                              .docs[index]['ServingMikrotic'];
+                                          var heights = snapshot
+                                              .data!.docs[index]['Height'];
+                                          var azmuths = snapshot
+                                              .data!.docs[index]['Azmuth'];
+                                          var tilts = snapshot.data!.docs[index]
+                                              ['Tilt'];
+                                          var latt =
+                                              snapshot.data!.docs[index]['Lat'];
+                                          var longitude = snapshot
+                                              .data!.docs[index]['Long'];
+
+                                          if (snapshot
+                                              .data!.docs[index]['SiteName']
+                                              .toString()
+                                              .toLowerCase()
+                                              .startsWith(
+                                                  searchedName.toLowerCase())) {
+                                            return Padding(
+                                              padding: const EdgeInsets.only(
+                                                  top: 8),
+                                              child: Table(
+                                                //border: TableBorder.all(),
+                                                defaultVerticalAlignment:
+                                                    TableCellVerticalAlignment
+                                                        .middle,
+                                                columnWidths: const {
+                                                  0: FlexColumnWidth(3),
+                                                  1: FlexColumnWidth(3),
+                                                  2: FlexColumnWidth(6),
+                                                  3: FlexColumnWidth(3),
+                                                  4: FlexColumnWidth(3),
+                                                  5: FlexColumnWidth(5),
+                                                  6: FlexColumnWidth(2),
+                                                  7: FlexColumnWidth(2),
+                                                  8: FlexColumnWidth(2),
+                                                  9: FlexColumnWidth(3),
+                                                  10: FlexColumnWidth(2),
+                                                  11: FlexColumnWidth(2),
+                                                  12: FlexColumnWidth(2),
+                                                  13: FlexColumnWidth(2.8),
+                                                  14: FlexColumnWidth(2.8),
+                                                  15: FlexColumnWidth(2),
                                                 },
-                                                icon: Icon(Icons.more_horiz))
-                                          ])
-                                    ],
-                                  ),
-                                );
-                              });
+                                                children: [
+                                                  TableRow(
+                                                      decoration: BoxDecoration(
+                                                          color: snapshot.data!
+                                                                              .docs[
+                                                                          index]
+                                                                      [
+                                                                      'Isapproved'] ==
+                                                                  'Pending'
+                                                              ? Colors
+                                                                  .yellowAccent
+                                                                  .withAlpha(
+                                                                      180)
+                                                              : AppColors()
+                                                                  .fifthcolor,
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(7),
+                                                          boxShadow: [
+                                                            BoxShadow(
+                                                                blurRadius: 8,
+                                                                offset: Offset(
+                                                                    3, 4),
+                                                                spreadRadius: 5,
+                                                                color: AppColors()
+                                                                    .black
+                                                                    .withOpacity(
+                                                                        0.08))
+                                                          ]),
+                                                      children: [
+                                                        SelectableText(
+                                                          '${snapshot.data!.docs[index]['Region']}',
+                                                          style: TextStyle(
+                                                              color: AppColors()
+                                                                  .black),
+                                                          textAlign:
+                                                              TextAlign.center,
+                                                        ),
+                                                        SelectableText(
+                                                          '${snapshot.data!.docs[index]['SiteName']}',
+                                                          style: TextStyle(
+                                                              color: AppColors()
+                                                                  .black),
+                                                          textAlign:
+                                                              TextAlign.center,
+                                                        ),
+                                                        SelectableText(
+                                                          '${snapshot.data!.docs[index]['DeviceName']}',
+                                                          style: TextStyle(
+                                                              color: AppColors()
+                                                                  .black),
+                                                          textAlign:
+                                                              TextAlign.center,
+                                                        ),
+                                                        SelectableText(
+                                                          '${snapshot.data!.docs[index]['MacAddress']}',
+                                                          style: TextStyle(
+                                                              color: AppColors()
+                                                                  .black),
+                                                          textAlign:
+                                                              TextAlign.center,
+                                                        ),
+                                                        SelectableText(
+                                                          '${snapshot.data!.docs[index]['IpAddress']}',
+                                                          style: TextStyle(
+                                                              color: AppColors()
+                                                                  .black),
+                                                          textAlign:
+                                                              TextAlign.center,
+                                                        ),
+                                                        SelectableText(
+                                                          '${snapshot.data!.docs[index]['Ssid']}',
+                                                          style: TextStyle(
+                                                              color: AppColors()
+                                                                  .black),
+                                                          textAlign:
+                                                              TextAlign.center,
+                                                        ),
+                                                        SelectableText(
+                                                          '${snapshot.data!.docs[index]['PortNumber']}',
+                                                          style: TextStyle(
+                                                              color: AppColors()
+                                                                  .black),
+                                                          textAlign:
+                                                              TextAlign.center,
+                                                        ),
+                                                        SelectableText(
+                                                          '${snapshot.data!.docs[index]['WirelessMode']}',
+                                                          style: TextStyle(
+                                                              color: AppColors()
+                                                                  .black),
+                                                          textAlign:
+                                                              TextAlign.center,
+                                                        ),
+                                                        SelectableText(
+                                                          '${snapshot.data!.docs[index]['Vlan']}',
+                                                          style: TextStyle(
+                                                              color: AppColors()
+                                                                  .black),
+                                                          textAlign:
+                                                              TextAlign.center,
+                                                        ),
+                                                        SelectableText(
+                                                          '${snapshot.data!.docs[index]['ServingMikrotic']}',
+                                                          style: TextStyle(
+                                                              color: AppColors()
+                                                                  .black),
+                                                          textAlign:
+                                                              TextAlign.center,
+                                                        ),
+                                                        SelectableText(
+                                                          '${snapshot.data!.docs[index]['Height']}',
+                                                          style: TextStyle(
+                                                              color: AppColors()
+                                                                  .black),
+                                                          textAlign:
+                                                              TextAlign.center,
+                                                        ),
+                                                        SelectableText(
+                                                          '${snapshot.data!.docs[index]['Azmuth']}',
+                                                          style: TextStyle(
+                                                              color: AppColors()
+                                                                  .black),
+                                                          textAlign:
+                                                              TextAlign.center,
+                                                        ),
+                                                        SelectableText(
+                                                          '${snapshot.data!.docs[index]['Tilt']}',
+                                                          style: TextStyle(
+                                                              color: AppColors()
+                                                                  .black),
+                                                          textAlign:
+                                                              TextAlign.center,
+                                                        ),
+                                                        SelectableText(
+                                                          '${snapshot.data!.docs[index]['Lat']}',
+                                                          style: TextStyle(
+                                                              color: AppColors()
+                                                                  .black),
+                                                          textAlign:
+                                                              TextAlign.center,
+                                                        ),
+                                                        SelectableText(
+                                                          '${snapshot.data!.docs[index]['Long']}',
+                                                          style: TextStyle(
+                                                              color: AppColors()
+                                                                  .black),
+                                                          textAlign:
+                                                              TextAlign.center,
+                                                        ),
+                                                        snapshot.data!.docs[
+                                                                        index][
+                                                                    'Isapproved'] ==
+                                                                'Pending'
+                                                            ? Padding(
+                                                                padding:
+                                                                    const EdgeInsets
+                                                                            .only(
+                                                                        top: 5),
+                                                                child:
+                                                                    Container(
+                                                                  width: 35,
+                                                                  height: 35,
+                                                                  child: Center(
+                                                                    child:
+                                                                        LoadingIndicator(
+                                                                      colors: [
+                                                                        AppColors()
+                                                                            .maincolor
+                                                                      ],
+                                                                      indicatorType:
+                                                                          Indicator
+                                                                              .ballRotateChase,
+                                                                    ),
+                                                                  ),
+                                                                ),
+                                                              )
+                                                            : IconButton(
+                                                                onPressed: () {
+                                                                  showDataOptions(
+                                                                      docid,
+                                                                      index,
+                                                                      region,
+                                                                      siteName,
+                                                                      deviceName,
+                                                                      ssid,
+                                                                      ipadd,
+                                                                      macadd,
+                                                                      pNumber,
+                                                                      wMode,
+                                                                      vlans,
+                                                                      sMikrotic,
+                                                                      heights,
+                                                                      azmuths,
+                                                                      tilts,
+                                                                      latt,
+                                                                      longitude);
+                                                                },
+                                                                icon: Icon(
+                                                                  Icons
+                                                                      .more_horiz,
+                                                                  color: AppColors()
+                                                                      .secondcolor,
+                                                                ))
+                                                      ])
+                                                ],
+                                              ),
+                                            );
+                                          } else {
+                                            Text('Search something?');
+                                          }
+
+                                          return Container();
+                                        }))
+                                    : ListView.builder(
+                                      controller: scrollController,
+                                        shrinkWrap: true,
+                                        itemCount: snapshot.data!.docs.length,
+                                        itemBuilder: (context, index) {
+                                          var siteName = snapshot
+                                              .data!.docs[index]['SiteName'];
+                                          var region = snapshot
+                                              .data!.docs[index]['Region'];
+                                          var docid = snapshot.data!.docs[index]
+                                              ['DocId'];
+                                          var ssid = snapshot.data!.docs[index]
+                                              ['Ssid'];
+                                          var deviceName = snapshot
+                                              .data!.docs[index]['DeviceName'];
+                                          var ipadd = snapshot.data!.docs[index]
+                                              ['IpAddress'];
+                                          var macadd = snapshot
+                                              .data!.docs[index]['MacAddress'];
+                                          var pNumber = snapshot
+                                              .data!.docs[index]['PortNumber'];
+                                          var wMode = snapshot.data!.docs[index]
+                                              ['WirelessMode'];
+                                          var vlans = snapshot.data!.docs[index]
+                                              ['Vlan'];
+                                          var sMikrotic = snapshot.data!
+                                              .docs[index]['ServingMikrotic'];
+                                          var heights = snapshot
+                                              .data!.docs[index]['Height'];
+                                          var azmuths = snapshot
+                                              .data!.docs[index]['Azmuth'];
+                                          var tilts = snapshot.data!.docs[index]
+                                              ['Tilt'];
+                                          var latt =
+                                              snapshot.data!.docs[index]['Lat'];
+                                          var longitude = snapshot
+                                              .data!.docs[index]['Long'];
+                                          return Padding(
+                                            padding:
+                                                const EdgeInsets.only(left: 0),
+                                            child: Padding(
+                                              padding: const EdgeInsets.only(
+                                                  top: 15),
+                                              child: Table(
+                                                //border: TableBorder.all(),
+                                                defaultVerticalAlignment:
+                                                    TableCellVerticalAlignment
+                                                        .middle,
+                                                columnWidths: const {
+                                                  0: FlexColumnWidth(3),
+                                                  1: FlexColumnWidth(3),
+                                                  2: FlexColumnWidth(6),
+                                                  3: FlexColumnWidth(3),
+                                                  4: FlexColumnWidth(3),
+                                                  5: FlexColumnWidth(5),
+                                                  6: FlexColumnWidth(2),
+                                                  7: FlexColumnWidth(2),
+                                                  8: FlexColumnWidth(2),
+                                                  9: FlexColumnWidth(3),
+                                                  10: FlexColumnWidth(2),
+                                                  11: FlexColumnWidth(2),
+                                                  12: FlexColumnWidth(2),
+                                                  13: FlexColumnWidth(2.8),
+                                                  14: FlexColumnWidth(2.8),
+                                                  15: FlexColumnWidth(2),
+                                                },
+                                                children: [
+                                                  TableRow(
+                                                      decoration: BoxDecoration(
+                                                          color: snapshot.data!
+                                                                              .docs[
+                                                                          index]
+                                                                      [
+                                                                      'Isapproved'] ==
+                                                                  'Pending'
+                                                              ? Colors
+                                                                  .yellowAccent
+                                                                  .withAlpha(
+                                                                      180)
+                                                              : AppColors()
+                                                                  .fifthcolor,
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(7),
+                                                          boxShadow: [
+                                                            BoxShadow(
+                                                                blurRadius: 8,
+                                                                offset: Offset(
+                                                                    3, 4),
+                                                                spreadRadius: 5,
+                                                                color: AppColors()
+                                                                    .black
+                                                                    .withOpacity(
+                                                                        0.08))
+                                                          ]),
+                                                      children: [
+                                                        SelectableText(
+                                                          '${snapshot.data!.docs[index]['Region']}',
+                                                          style: TextStyle(
+                                                              color: AppColors()
+                                                                  .black),
+                                                          textAlign:
+                                                              TextAlign.center,
+                                                        ),
+                                                        SelectableText(
+                                                          '${snapshot.data!.docs[index]['SiteName']}',
+                                                          style: TextStyle(
+                                                              color: AppColors()
+                                                                  .black),
+                                                          textAlign:
+                                                              TextAlign.center,
+                                                        ),
+                                                        SelectableText(
+                                                          '${snapshot.data!.docs[index]['DeviceName']}',
+                                                          style: TextStyle(
+                                                              color: AppColors()
+                                                                  .black),
+                                                          textAlign:
+                                                              TextAlign.center,
+                                                        ),
+                                                        SelectableText(
+                                                          '${snapshot.data!.docs[index]['MacAddress']}',
+                                                          style: TextStyle(
+                                                              color: AppColors()
+                                                                  .black),
+                                                          textAlign:
+                                                              TextAlign.center,
+                                                        ),
+                                                        SelectableText(
+                                                          '${snapshot.data!.docs[index]['IpAddress']}',
+                                                          style: TextStyle(
+                                                              color: AppColors()
+                                                                  .black),
+                                                          textAlign:
+                                                              TextAlign.center,
+                                                        ),
+                                                        SelectableText(
+                                                          '${snapshot.data!.docs[index]['Ssid']}',
+                                                          style: TextStyle(
+                                                              color: AppColors()
+                                                                  .black),
+                                                          textAlign:
+                                                              TextAlign.center,
+                                                        ),
+                                                        SelectableText(
+                                                          '${snapshot.data!.docs[index]['PortNumber']}',
+                                                          style: TextStyle(
+                                                              color: AppColors()
+                                                                  .black),
+                                                          textAlign:
+                                                              TextAlign.center,
+                                                        ),
+                                                        SelectableText(
+                                                          '${snapshot.data!.docs[index]['WirelessMode']}',
+                                                          style: TextStyle(
+                                                              color: AppColors()
+                                                                  .black),
+                                                          textAlign:
+                                                              TextAlign.center,
+                                                        ),
+                                                        SelectableText(
+                                                          '${snapshot.data!.docs[index]['Vlan']}',
+                                                          style: TextStyle(
+                                                              color: AppColors()
+                                                                  .black),
+                                                          textAlign:
+                                                              TextAlign.center,
+                                                        ),
+                                                        SelectableText(
+                                                          '${snapshot.data!.docs[index]['ServingMikrotic']}',
+                                                          style: TextStyle(
+                                                              color: AppColors()
+                                                                  .black),
+                                                          textAlign:
+                                                              TextAlign.center,
+                                                        ),
+                                                        SelectableText(
+                                                          '${snapshot.data!.docs[index]['Height']}',
+                                                          style: TextStyle(
+                                                              color: AppColors()
+                                                                  .black),
+                                                          textAlign:
+                                                              TextAlign.center,
+                                                        ),
+                                                        SelectableText(
+                                                          '${snapshot.data!.docs[index]['Azmuth']}',
+                                                          style: TextStyle(
+                                                              color: AppColors()
+                                                                  .black),
+                                                          textAlign:
+                                                              TextAlign.center,
+                                                        ),
+                                                        SelectableText(
+                                                          '${snapshot.data!.docs[index]['Tilt']}',
+                                                          style: TextStyle(
+                                                              color: AppColors()
+                                                                  .black),
+                                                          textAlign:
+                                                              TextAlign.center,
+                                                        ),
+                                                        SelectableText(
+                                                          '${snapshot.data!.docs[index]['Lat']}',
+                                                          style: TextStyle(
+                                                              color: AppColors()
+                                                                  .black),
+                                                          textAlign:
+                                                              TextAlign.center,
+                                                        ),
+                                                        SelectableText(
+                                                          '${snapshot.data!.docs[index]['Long']}',
+                                                          style: TextStyle(
+                                                              color: AppColors()
+                                                                  .black),
+                                                          textAlign:
+                                                              TextAlign.center,
+                                                        ),
+                                                        snapshot.data!.docs[
+                                                                        index][
+                                                                    'Isapproved'] ==
+                                                                'Pending'
+                                                            ? Padding(
+                                                                padding:
+                                                                    const EdgeInsets
+                                                                            .only(
+                                                                        top: 5),
+                                                                child:
+                                                                    Container(
+                                                                  width: 35,
+                                                                  height: 35,
+                                                                  child: Center(
+                                                                    child:
+                                                                        LoadingIndicator(
+                                                                      colors: [
+                                                                        AppColors()
+                                                                            .maincolor
+                                                                      ],
+                                                                      indicatorType:
+                                                                          Indicator
+                                                                              .ballRotateChase,
+                                                                    ),
+                                                                  ),
+                                                                ),
+                                                              )
+                                                            : IconButton(
+                                                                onPressed: () {
+                                                                  showDataOptions(
+                                                                      docid,
+                                                                      index,
+                                                                      region,
+                                                                      siteName,
+                                                                      deviceName,
+                                                                      ssid,
+                                                                      ipadd,
+                                                                      macadd,
+                                                                      pNumber,
+                                                                      wMode,
+                                                                      vlans,
+                                                                      sMikrotic,
+                                                                      heights,
+                                                                      azmuths,
+                                                                      tilts,
+                                                                      latt,
+                                                                      longitude);
+                                                                },
+                                                                icon: Icon(
+                                                                  Icons
+                                                                      .more_horiz,
+                                                                  color: AppColors()
+                                                                      .secondcolor,
+                                                                ))
+                                                      ])
+                                                ],
+                                              ),
+                                            ),
+                                          );
+                                        })),
+                          );
                         }
                         return CircularProgressIndicator();
                       })),
                   SizedBox(
                     height: 15,
                   ),
-                  FloatingActionButton(
-                    onPressed: () {
-                      if (check == false) {
-                        setState(() {
-                          check = true;
-                        });
-                      }
-                    },
-                    backgroundColor: AppColors().secondcolor,
-                    child: Icon(
-                      Icons.add,
-                      color: AppColors().fifthcolor,
+                  Visibility(
+                    visible: searchbuttontapped == false ? true : false,
+                    child: FloatingActionButton(
+                      onPressed: () {
+                        if (check == false) {
+                          setState(() {
+                            check = true;
+                          });
+                        }
+                      },
+                      backgroundColor: AppColors().secondcolor,
+                      child: Icon(
+                        Icons.add,
+                        color: AppColors().fifthcolor,
+                      ),
                     ),
                   )
                 ],
@@ -1168,7 +1590,7 @@ class _P2pState extends State<P2p> {
     } else {
       setState(() {
         sectorview = false;
-        print(index.toString());
+       
       });
     }
   }
@@ -1232,6 +1654,7 @@ class _P2pState extends State<P2p> {
         setState(() {
           isupdating = false;
         });
+        Navigator.of(context).pop();
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
             backgroundColor: AppColors().thirdcolor,
@@ -1239,6 +1662,7 @@ class _P2pState extends State<P2p> {
                 style: TextStyle(
                   color: AppColors().fifthcolor,
                 ))));
+        Navigator.of(context).pop();
       }
     } else {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
@@ -1282,10 +1706,15 @@ class _P2pState extends State<P2p> {
 
   void deletesite(String documentId) {
     try {
-      userbox.get('UserRole') == 'user' ? FirebaseFirestore.instance.collection('P2P').doc(documentId).update({
-        'IsApproved' : 'Pending'
-      }):
-      FirebaseFirestore.instance.collection('P2P').doc(documentId).delete();
+      userbox.get('UserRole') == 'user'
+          ? FirebaseFirestore.instance
+              .collection('P2P')
+              .doc(documentId)
+              .update({'Isapproved': 'Pending'})
+          : FirebaseFirestore.instance
+              .collection('P2P')
+              .doc(documentId)
+              .delete();
       Navigator.of(context).pop();
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
@@ -1304,7 +1733,7 @@ class _P2pState extends State<P2p> {
 
         FirebaseFirestore.instance.collection('P2P').doc(doc).set({
           'Region': regioncontroller.text,
-          'IsApproved' : 'notrequested',
+          'Isapproved': 'notrequested',
           'SiteName': siteName.text,
           'DeviceName': deviceName.text,
           'MacAddress': macaddress.text,
@@ -1319,7 +1748,8 @@ class _P2pState extends State<P2p> {
           'Tilt': tilt.text,
           'Lat': lat.text,
           'Long': lon.text,
-          'DocId': doc
+          'DocId': doc,
+          'CreatedDate' : DateTime.now(),
         });
         regioncontroller.clear();
         siteName.clear();

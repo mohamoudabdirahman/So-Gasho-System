@@ -3,8 +3,10 @@ import 'package:somcable_web_app/colors/Colors.dart';
 
 class TextButtons extends StatelessWidget {
   var ontap;
+  var buttoncolor;
   String? title;
-  TextButtons({Key? key, required this.ontap, required this.title}) : super(key: key);
+  TextButtons({Key? key, required this.ontap, required this.title,required this.buttoncolor})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -12,7 +14,10 @@ class TextButtons extends StatelessWidget {
         onPressed: ontap,
         child: Text(
           title!,
-          style: TextStyle(fontSize: 31, fontWeight: FontWeight.bold,color: AppColors().black),
+          style: TextStyle(
+              fontSize: 25,
+              fontWeight: FontWeight.bold,
+              color: buttoncolor),
         ));
   }
 }

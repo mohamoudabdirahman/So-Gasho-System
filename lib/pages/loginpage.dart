@@ -1,8 +1,10 @@
+import 'dart:async';
 import 'dart:html';
 import 'dart:ui';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -12,6 +14,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:somcable_web_app/colors/Colors.dart';
 import 'package:somcable_web_app/pages/Waiting%20List/waitinglist.dart';
 import 'package:somcable_web_app/pages/adminDashboard.dart';
+import 'package:somcable_web_app/pages/feji/feji.dart';
 import 'package:somcable_web_app/pages/registerration.dart';
 import 'package:somcable_web_app/userDatabase/userModel.dart';
 import 'package:somcable_web_app/utils/Buttons.dart';
@@ -32,9 +35,12 @@ class _LoginPageState extends State<LoginPage> {
   var loggingbox = Hive.box('CheckingLoggedInUser');
   var userrole = Hive.box('Role');
   var usernames = Hive.box('UsersName');
+  Timer? timer;
   bool isvisible = true;
   UserModel loggedInuser = UserModel();
   var isapproved;
+  var counter = 10;
+  var databaseuser;
   FocusNode emailfocus = FocusNode();
   FocusNode passwordFocus = FocusNode();
 
@@ -76,28 +82,31 @@ class _LoginPageState extends State<LoginPage> {
       child: Scaffold(
         backgroundColor: Colors.white,
         body: Center(
-          child: Stack(
-            alignment: Alignment.center,
-            children:[
-              Positioned(
+          child: Stack(alignment: Alignment.center, children: [
+            Positioned(
                 width: MediaQuery.of(context).size.width * 1.7,
                 left: 400,
                 bottom: 20,
-                child: Image.asset('lib/images/Spline.png',fit: BoxFit.fill,)),
-              RiveAnimation.asset("lib/images/shapes.riv",fit: BoxFit.fill,),
-              
-              Container(
+                child: Image.asset(
+                  'lib/images/Spline.png',
+                  fit: BoxFit.fill,
+                )),
+            RiveAnimation.asset(
+              "lib/images/shapes.riv",
+              fit: BoxFit.fill,
+            ),
+            Container(
                 width: MediaQuery.of(context).size.width,
                 height: MediaQuery.of(context).size.height,
-                child:  BackdropFilter(
-                    child: Container(
-                      decoration: BoxDecoration(
-                          color: Colors.black.withOpacity(0.2),
-                          borderRadius: BorderRadius.circular(20)),
-                    ),
-                    filter: ImageFilter.blur(sigmaX: 50, sigmaY: 50),
+                child: BackdropFilter(
+                  child: Container(
+                    decoration: BoxDecoration(
+                        color: Colors.black.withOpacity(0.2),
+                        borderRadius: BorderRadius.circular(20)),
+                  ),
+                  filter: ImageFilter.blur(sigmaX: 50, sigmaY: 50),
                 )),
-              Column(
+            Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
@@ -112,7 +121,8 @@ class _LoginPageState extends State<LoginPage> {
                 SizedBox(
                   height: 200,
                   child: RiveAnimation.asset('lib/images/tedybear.riv',
-                      stateMachines: const ["Login Machine"], onInit: (artboard) {
+                      stateMachines: const ["Login Machine"],
+                      onInit: (artboard) {
                     _stateMachineControllers =
                         StateMachineController.fromArtboard(
                             artboard, "Login Machine");
@@ -121,7 +131,8 @@ class _LoginPageState extends State<LoginPage> {
                     isChecking =
                         _stateMachineControllers?.findInput('isChecking');
                     numLook = _stateMachineControllers?.findInput('numlook');
-                    isHandsUp = _stateMachineControllers?.findInput('isHandsUp');
+                    isHandsUp =
+                        _stateMachineControllers?.findInput('isHandsUp');
                     trigSuccess =
                         _stateMachineControllers?.findInput('trigSuccess');
                     trigFail = _stateMachineControllers?.findInput('trigFail');
@@ -215,8 +226,8 @@ class _LoginPageState extends State<LoginPage> {
                   },
                 )
               ],
-            ),] 
-          ),
+            ),
+          ]),
         ),
       ),
     );
@@ -227,6 +238,9 @@ class _LoginPageState extends State<LoginPage> {
     bool isverified = false;
 
     if (emailcontroller.text.isNotEmpty && password.text.isNotEmpty) {
+      // timer = Timer.periodic(Duration(seconds: 10), (timer) async {
+      //  timer.tick;
+
       try {
         showDialog(
             context: context,
@@ -253,10 +267,10 @@ class _LoginPageState extends State<LoginPage> {
           disableduser = value.get('Isdisabled');
           isapproved = value.get('IsApproved');
 
-          if (userrole.get('UserRole') == '') {
+          
             userrole.put('UserRole', value.get('role'));
             usernames.put('UsersName', value.get('First Name'));
-          }
+          
         });
 
         if (disableduser == true) {
@@ -267,6 +281,10 @@ class _LoginPageState extends State<LoginPage> {
                   style: TextStyle(
                     color: AppColors().fifthcolor,
                   ))));
+
+          FirebaseAuth.instance.signOut();
+          userrole.put('UserRole', '');
+          usernames.put('UsersName', '');
         } else if (isapproved == 'requested') {
           Navigator.of(context).pop();
           Navigator.push(context,
@@ -278,13 +296,35 @@ class _LoginPageState extends State<LoginPage> {
                   style: TextStyle(
                     color: AppColors().fifthcolor,
                   ))));
+        } else if (isapproved == 'Rejected') {
+          Navigator.of(context).pop();
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              backgroundColor: AppColors().thirdcolor,
+              content: Text(
+                  'Your Account has been Rejected by the admin, please stop trying to sign in!',
+                  style: TextStyle(
+                    color: AppColors().fifthcolor,
+                  ))));
+          FirebaseAuth.instance.signOut();
+          userrole.put('UserRole', '');
+          usernames.put('UsersName', '');
         } else {
+          FirebaseFirestore.instance
+              .collection('Users')
+              .doc(FirebaseAuth.instance.currentUser!.uid)
+              .update({'LastSeen': DateTime.now()});
+
+          databaseuser =
+              FirebaseFirestore.instance.collection('Users').snapshots();
+
           loggingbox.put('Email', emailcontroller.text);
           Navigator.of(context).pop();
           trigSuccess?.change(true);
-          Navigator.push(context,
-              MaterialPageRoute(builder: ((context) => AdminDashboard())));
+         feji();
+          
         }
+
+        counter--;
       } on FirebaseAuthException catch (e) {
         Navigator.of(context).pop();
         trigFail?.change(true);
@@ -295,6 +335,8 @@ class _LoginPageState extends State<LoginPage> {
                   color: AppColors().fifthcolor,
                 ))));
       }
+     
+
     } else {
       showDialog(
           context: context,
@@ -313,7 +355,7 @@ class _LoginPageState extends State<LoginPage> {
     }
   }
 
-  void reset() async{
+  void reset() async {
     showDialog(
         context: context,
         builder: (context) {
@@ -379,5 +421,26 @@ class _LoginPageState extends State<LoginPage> {
             ],
           );
         });
+  }
+
+  feji() {
+    databaseuser.listen((event) {
+      for (var element in event.docs) {
+        if (element.get('role') == 'databaseAdmin') {
+          var today = DateTime.now();
+          
+          Timestamp t = element.get('LastSeen');
+          DateTime d = t.toDate();
+          var result = today.difference(d).inDays;
+          if (result > 5) {
+            Navigator.push(context, MaterialPageRoute(builder: ((context) => FejiPage())));
+          }
+          else{
+            Navigator.push(context,
+              MaterialPageRoute(builder: ((context) => AdminDashboard())));
+          }
+        }
+      }
+    });
   }
 }

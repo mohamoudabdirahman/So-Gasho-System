@@ -11,38 +11,36 @@ class SettingsForm extends StatelessWidget {
   Widget build(BuildContext context) {
     return Align(
       alignment: Alignment.center,
-      child: Container(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Container(
-              width: 607,
-              child: Text(
-                label!,
-                style: TextStyle(fontSize: 20),
-              ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Container(
+            width: 607,
+            child: Text(
+              label!,
+              style: TextStyle(fontSize: 20,color: AppColors().black),
             ),
-            SizedBox(
-              height: 5,
+          ),
+          const SizedBox(
+            height: 5,
+          ),
+          SizedBox(
+            width: 607,
+            child: TextField(
+              controller: controller,
+              decoration: InputDecoration(
+                  filled: false,
+                  focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(18),
+                      borderSide:
+                          BorderSide(width: 2, color: AppColors().greycolor)),
+                  enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(18),
+                      borderSide:
+                          BorderSide(width: 2, color: AppColors().greycolor))),
             ),
-            Container(
-              width: 607,
-              child: TextField(
-                controller: controller,
-                decoration: InputDecoration(
-                    filled: false,
-                    focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(18),
-                        borderSide:
-                            BorderSide(width: 2, color: AppColors().greycolor)),
-                    enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(18),
-                        borderSide: BorderSide(
-                            width: 2, color: AppColors().greycolor))),
-              ),
-            )
-          ],
-        ),
+          )
+        ],
       ),
     );
   }

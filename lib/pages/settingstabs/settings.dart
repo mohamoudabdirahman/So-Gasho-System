@@ -13,21 +13,22 @@ class SettingsPage extends StatefulWidget {
 }
 
 class _SettingsPageState extends State<SettingsPage> {
-  String? settingTab = 'Personalization';
+  String? settingTab = 'PersonalInfo';
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(20),
       child: Container(
           width: MediaQuery.of(context).size.width - 196,
+          
           decoration: BoxDecoration(
-              color: AppColors().darkwhite,
-              borderRadius: BorderRadius.circular(70),
+              color: AppColors().fifthcolor,
+              borderRadius: BorderRadius.circular(50),
               boxShadow: [
                 BoxShadow(
                     offset: Offset(0, 3),
                     blurRadius: 10,
-                    color: Colors.black.withOpacity(0.5))
+                    color: Colors.black.withOpacity(0.3))
               ]),
           child: Padding(
             padding: const EdgeInsets.all(65),
@@ -38,7 +39,7 @@ class _SettingsPageState extends State<SettingsPage> {
                   'Settings',
                   style: TextStyle(
                       fontSize: 31,
-                      color: AppColors().greycolor,
+                      color: AppColors().maincolor,
                       fontWeight: FontWeight.bold),
                 ),
                 Divider(
@@ -48,42 +49,52 @@ class _SettingsPageState extends State<SettingsPage> {
                   padding: const EdgeInsets.only(top: 28, bottom: 28),
                   child: Row(
                     children: [
-                      TextButtons(
-                          ontap: () {
+                      AnimatedContainer(
+                        duration: Duration(microseconds: 300),
+                        decoration: BoxDecoration(
+                          color: settingTab == 'PersonalInfo' ? AppColors().secondcolor : AppColors().fifthcolor,
+                          borderRadius: BorderRadius.circular(10)
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(10.0),
+                          child: TextButtons(
+                            buttoncolor: settingTab == 'PersonalInfo' ? AppColors().fifthcolor : AppColors().black,
+                            ontap: () {
                             setState(() {
-                              settingTab = 'Personalization';
-                            });
-                          },
-                          title: 'Personalization'),
+                                  settingTab = 'PersonalInfo';
+                                });
+                          }, title: 'Personal Information'),
+                        ),
+                      ),
                       SizedBox(
                         width: 132,
                       ),
-                      TextButtons(ontap: () {
-                        setState(() {
-                              settingTab = 'PersonalInfo';
-                            });
-                      }, title: 'Personal Information'),
-                      SizedBox(
-                        width: 132,
+                      AnimatedContainer(
+                        duration: Duration(milliseconds: 300),
+                        decoration: BoxDecoration(
+                          color: settingTab == 'Security' ? AppColors().secondcolor : AppColors().fifthcolor,
+                          borderRadius: BorderRadius.circular(10)
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(10.0),
+                          child: TextButtons(
+                              buttoncolor: settingTab == 'Security' ? AppColors().fifthcolor : AppColors().black,
+                            ontap: () {
+                            setState(() {
+                                  settingTab = 'Security';
+                                });
+                          }, title: 'Security'),
+                        ),
                       ),
-                      TextButtons(ontap: () {
-                        setState(() {
-                              settingTab = 'Security';
-                            });
-                      }, title: 'Security'),
                     ],
                   ),
                 ),
                 Divider(),
                 // the area that changes frequently
-                SizedBox(
-                  height: 50,
+               const  SizedBox(
+                  height: 5,
                 ),
-                settingTab == 'Personalization'?
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [Personalization()],
-                ): settingTab == 'PersonalInfo' ? PersonalInfo() : settingTab == 'Security' ? Securitypage() : SizedBox()
+                 settingTab == 'PersonalInfo' ? PersonalInfo() : settingTab == 'Security' ? Securitypage() : SizedBox()
               ],
             ),
           )),

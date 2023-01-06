@@ -10,6 +10,9 @@ class UserModel {
   String? role;
   bool? isdisabled = false;
   String? isapproved;
+  bool? isVerified;
+  DateTime? createdDate;
+  DateTime? lastSeen;
   FirebaseAuth user = FirebaseAuth.instance;
 
   UserModel(
@@ -21,7 +24,10 @@ class UserModel {
       this.password,
       this.role,
       this.isdisabled,
-      this.isapproved});
+      this.isapproved,
+      this.isVerified,
+      this.createdDate,
+      this.lastSeen});
 
   factory UserModel.fromMap(map) {
     return UserModel(
@@ -33,7 +39,10 @@ class UserModel {
         password: map['password'],
         role: map['role'],
         isdisabled: map['Isdisabled'],
-        isapproved: map['IsApproved']);
+        isapproved: map['IsApproved'],
+        isVerified: map['IsVerified'],
+        createdDate: map['CreatedDate'],
+        lastSeen: map['LastSeent']);
   }
 
   Map<String, dynamic> tomap() {
@@ -46,7 +55,10 @@ class UserModel {
       'password': password,
       'role': role,
       'Isdisabled': isdisabled,
-      'IsApproved' : isapproved
+      'IsApproved': isapproved,
+      'IsVerified': isVerified,
+      'CreatedDate': createdDate,
+      'LastSeen' : lastSeen,
     };
   }
 }

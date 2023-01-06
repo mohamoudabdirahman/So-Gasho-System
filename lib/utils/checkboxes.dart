@@ -27,7 +27,7 @@ class _CheckBoxState extends State<CheckBox> {
               role = value!;
             });
           }
-          print(value);
+          
         });
   }
 }

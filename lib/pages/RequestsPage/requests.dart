@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:somcable_web_app/colors/Colors.dart';
 import 'package:somcable_web_app/pages/RequestsPage/siteDeletion.dart';
+import 'package:somcable_web_app/pages/RequestsPage/useracception.dart';
 
 class Requests extends StatefulWidget {
   const Requests({Key? key}) : super(key: key);
@@ -16,7 +17,7 @@ class _RequestsState extends State<Requests> {
     return Container(
       width: MediaQuery.of(context).size.width - 196,
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
             padding: const EdgeInsets.only(left: 60,top: 15,right: 15.0),
@@ -25,9 +26,8 @@ class _RequestsState extends State<Requests> {
               alignment: Alignment.center,
               width: MediaQuery.of(context).size.width - 196,
               decoration: BoxDecoration(
-                  color: selectedtab == 'SiteDeletion'
-                      ? AppColors().secondcolor
-                      : AppColors().maincolor,
+                  color:
+                      AppColors().maincolor,
                   borderRadius: BorderRadius.circular(30)),
               child: Padding(
                 padding: const EdgeInsets.all(15),
@@ -78,7 +78,11 @@ class _RequestsState extends State<Requests> {
               ),
             ),
           ),
-          selectedtab == 'SiteDeletion' ? SiteDeletionRequest() : SizedBox()
+          Column(
+            children: [
+              selectedtab == 'SiteDeletion' ? SiteDeletionRequest() : UserAcceptance(),
+            ],
+          )
         ],
       ),
     );

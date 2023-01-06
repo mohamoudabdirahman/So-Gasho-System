@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -5,6 +7,8 @@ import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:searchbar_animation/searchbar_animation.dart';
 import 'package:somcable_web_app/colors/Colors.dart';
+import 'package:somcable_web_app/utils/Buttons.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class UserData extends StatefulWidget {
   const UserData({super.key});
@@ -22,6 +26,8 @@ class _UserDataState extends State<UserData> {
   var roles = ['User', 'Admin'];
   var _groupValue = -1;
   var userbox = Hive.box('Role');
+  final Uri _url = Uri.parse(
+      'https://www.careerexplorer.com/careers/database-administrator/');
 
   @override
   Widget build(BuildContext context) {
@@ -47,10 +53,7 @@ class _UserDataState extends State<UserData> {
                   searchbuttontapped = false;
                 });
               },
-              onPressButton: (isSearchBarOpens) {
-                debugPrint(
-                    'do something before animation started. It\'s the ${isSearchBarOpens ? 'opening' : 'closing'} animation');
-              },
+              onPressButton: (isSearchBarOpens) {},
               trailingWidget: const Icon(
                 Icons.search,
                 size: 20,
@@ -79,194 +82,244 @@ class _UserDataState extends State<UserData> {
               child: Stack(
                 children: [
                   searchbuttontapped == false
-                      ? Column(
-                          children: [
-                            Column(children: [
-                              Table(
-                                children: [
-                                  TableRow(children: [
-                                    Text(
-                                      'Full Name',
-                                      textAlign: TextAlign.start,
-                                      style: TextStyle(
-                                          fontSize: 16,
-                                          color: AppColors().black,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                    Text(
-                                      'Role',
-                                      style: TextStyle(
-                                          fontSize: 16,
-                                          color: AppColors().black,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                    Text(
-                                      'Email',
-                                      style: TextStyle(
-                                          fontSize: 16,
-                                          color: AppColors().black,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                    Text(
-                                      'Phone Number',
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(
-                                          fontSize: 16,
-                                          color: AppColors().black,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                    Text(
-                                      'Options',
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(
-                                          fontSize: 16,
-                                          color: AppColors().black,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                  ]),
-                                ],
-                              )
-                            ]),
-                            SizedBox(
-                              height: 10,
-                            ),
-                            Divider(
-                              height: 2,
-                              color: AppColors().greycolor,
-                            ),
-                            SizedBox(
-                              height: 10,
-                            ),
-                            StreamBuilder(
-                                stream: FirebaseFirestore.instance
-                                    .collection('Users')
-                                    .snapshots(),
-                                builder: (BuildContext context,
-                                    AsyncSnapshot<QuerySnapshot> snapshot) {
-                                  if (snapshot.hasData) {
-                                    print('I have data');
-                                    return Expanded(
-                                      child: ListView.builder(
-                                          itemCount:
-                                              snapshot.data!.docs.length > 5
-                                                  ? 5
-                                                  : snapshot.data!.docs.length,
-                                          itemBuilder: (context, index) {
-                                            var firstname = snapshot.data!
-                                                .docs[index]['First Name'];
-                                            var secondname = snapshot
-                                                .data!.docs[index]['Last Name'];
-                                            var roles = snapshot
-                                                .data!.docs[index]['role'];
-                                            var emails = snapshot
-                                                .data!.docs[index]['Email'];
-                                            var phonenumber = snapshot.data!
-                                                .docs[index]['PhoneNumber'];
-                                            var isdisabled = snapshot.data!
-                                                .docs[index]['Isdisabled'];
-                                            var userId = snapshot
-                                                .data!.docs[index]['uid'];
-                                            return Padding(
-                                              padding:
-                                                  const EdgeInsets.all(8.0),
-                                              child: Table(
-                                                children: [
-                                                  TableRow(children: [
-                                                    SelectableText(
-                                                      '$firstname'
-                                                      ' $secondname',
-                                                      autofocus: true,
-                                                      textAlign:
-                                                          TextAlign.start,
-                                                      style: TextStyle(
-                                                          fontSize: 16,
-                                                          color: isdisabled ==
-                                                                  true
-                                                              ? AppColors()
-                                                                  .black
-                                                                  .withOpacity(
-                                                                      0.5)
-                                                              : AppColors()
-                                                                  .black),
-                                                    ),
-                                                    SelectableText(
-                                                      '$roles',
-                                                      textAlign:
-                                                          TextAlign.start,
-                                                      style: TextStyle(
-                                                          fontSize: 16,
-                                                          color: isdisabled ==
-                                                                  true
-                                                              ? AppColors()
-                                                                  .black
-                                                                  .withOpacity(
-                                                                      0.5)
-                                                              : AppColors()
-                                                                  .black),
-                                                    ),
-                                                    SelectableText(
-                                                      '$emails',
-                                                      textAlign:
-                                                          TextAlign.start,
-                                                      style: TextStyle(
-                                                          fontSize: 16,
-                                                          color: isdisabled ==
-                                                                  true
-                                                              ? AppColors()
-                                                                  .black
-                                                                  .withOpacity(
-                                                                      0.5)
-                                                              : AppColors()
-                                                                  .black),
-                                                    ),
-                                                    SelectableText(
-                                                      '$phonenumber',
-                                                      textAlign:
-                                                          TextAlign.center,
-                                                      style: TextStyle(
-                                                          fontSize: 16,
-                                                          color: isdisabled ==
-                                                                  true
-                                                              ? AppColors()
-                                                                  .black
-                                                                  .withOpacity(
-                                                                      0.5)
-                                                              : AppColors()
-                                                                  .black),
-                                                    ),
-                                                    IconButton(
-                                                        onPressed: () {
-                                                          showoptiondialog(
-                                                              index,
-                                                              snapshot,
-                                                              isdisabled,
-                                                              roles,
-                                                              userId);
-                                                        },
-                                                        icon: Icon(
-                                                          Icons.more_horiz,
-                                                          size: 40,
-                                                          color: AppColors()
-                                                              .secondcolor,
-                                                        ))
-                                                  ])
-                                                ],
-                                              ),
-                                            );
-                                          }),
-                                    );
-                                  }
-                                  if (snapshot.hasError) {
-                                    return Center(
-                                      child: Text('There is something wrong!'),
-                                    );
-                                  }
+                      ? SingleChildScrollView(
+                          child: Container(
+                            height: MediaQuery.of(context).size.height,
+                            child: Column(
+                              children: [
+                                Table(
+                                  children: [
+                                    TableRow(children: [
+                                      Text(
+                                        'Full Name',
+                                        textAlign: TextAlign.start,
+                                        style: TextStyle(
+                                            fontSize: 16,
+                                            color: AppColors().black,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                      Text(
+                                        'Role',
+                                        style: TextStyle(
+                                            fontSize: 16,
+                                            color: AppColors().black,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                      Text(
+                                        'Email',
+                                        style: TextStyle(
+                                            fontSize: 16,
+                                            color: AppColors().black,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                      Text(
+                                        'Phone Number',
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                            fontSize: 16,
+                                            color: AppColors().black,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                      Text(
+                                        'Options',
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                            fontSize: 16,
+                                            color: AppColors().black,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                    ]),
+                                  ],
+                                ),
+                                SizedBox(
+                                  height: 10,
+                                ),
+                                Divider(
+                                  height: 2,
+                                  color: AppColors().greycolor,
+                                ),
+                                SizedBox(
+                                  height: 10,
+                                ),
+                                StreamBuilder(
+                                    stream: FirebaseFirestore.instance
+                                        .collection('Users')
+                                        .snapshots(),
+                                    builder: (BuildContext context,
+                                        AsyncSnapshot<QuerySnapshot> snapshot) {
+                                      if (snapshot.hasData) {
+                                        return Expanded(
+                                          child: ListView.builder(
+                                              itemCount:
+                                                  snapshot.data!.docs.length > 5
+                                                      ? 5
+                                                      : snapshot
+                                                          .data!.docs.length,
+                                              itemBuilder: (context, index) {
+                                                var firstname = snapshot.data!
+                                                    .docs[index]['First Name'];
+                                                var secondname = snapshot.data!
+                                                    .docs[index]['Last Name'];
+                                                var roles = snapshot
+                                                    .data!.docs[index]['role'];
+                                                var emails = snapshot
+                                                    .data!.docs[index]['Email'];
+                                                var phonenumber = snapshot.data!
+                                                    .docs[index]['PhoneNumber'];
+                                                var isdisabled = snapshot.data!
+                                                    .docs[index]['Isdisabled'];
+                                                var userId = snapshot
+                                                    .data!.docs[index]['uid'];
+                                                return Padding(
+                                                  padding:
+                                                      const EdgeInsets.all(8.0),
+                                                  child: Table(
+                                                    children: [
+                                                      TableRow(children: [
+                                                        SelectableText(
+                                                          '$firstname'
+                                                          ' $secondname',
+                                                          autofocus: true,
+                                                          textAlign:
+                                                              TextAlign.start,
+                                                          style: TextStyle(
+                                                              fontSize: 16,
+                                                              color: isdisabled ==
+                                                                      true
+                                                                  ? AppColors()
+                                                                      .black
+                                                                      .withOpacity(
+                                                                          0.5)
+                                                                  : AppColors()
+                                                                      .black),
+                                                        ),
+                                                        SelectableText(
+                                                          '$roles',
+                                                          textAlign:
+                                                              TextAlign.start,
+                                                          style: TextStyle(
+                                                              fontSize: 16,
+                                                              color: isdisabled ==
+                                                                      true
+                                                                  ? AppColors()
+                                                                      .black
+                                                                      .withOpacity(
+                                                                          0.5)
+                                                                  : AppColors()
+                                                                      .black),
+                                                        ),
+                                                        SelectableText(
+                                                          '$emails',
+                                                          textAlign:
+                                                              TextAlign.start,
+                                                          style: TextStyle(
+                                                              fontSize: 16,
+                                                              color: isdisabled ==
+                                                                      true
+                                                                  ? AppColors()
+                                                                      .black
+                                                                      .withOpacity(
+                                                                          0.5)
+                                                                  : AppColors()
+                                                                      .black),
+                                                        ),
+                                                        SelectableText(
+                                                          '$phonenumber',
+                                                          textAlign:
+                                                              TextAlign.center,
+                                                          style: TextStyle(
+                                                              fontSize: 16,
+                                                              color: isdisabled ==
+                                                                      true
+                                                                  ? AppColors()
+                                                                      .black
+                                                                      .withOpacity(
+                                                                          0.5)
+                                                                  : AppColors()
+                                                                      .black),
+                                                        ),
+                                                        roles == 'databaseAdmin'
+                                                            ? IconButton(
+                                                                onPressed: () {
+                                                                  showDialog(
+                                                                      context:
+                                                                          context,
+                                                                      builder:
+                                                                          (context) {
+                                                                        return AlertDialog(
+                                                                          backgroundColor:
+                                                                              AppColors().fifthcolor,
+                                                                          title:
+                                                                               Text('Warning!',style: TextStyle(color: AppColors().black),),
+                                                                          content:
+                                                                              Text(
+                                                                            'You are not able to delete or disable a database admin because a database admin is the core of the system!',
+                                                                            style:
+                                                                                TextStyle(color: AppColors().black),
+                                                                          ),
+                                                                          actions: [
+                                                                          
+                                                                            Container(
+                                                                              width: 100,
+                                                                              child: Buttons(
+                                                                                  buttonColor: AppColors().secondcolor.withOpacity(0.6),
+                                                                                  buttonText: 'cancel',
+                                                                                  ontap: () {
+                                                                                    Navigator.of(context).pop();
+                                                                                  }),
+                                                                            ),
+                                                                                  Buttons(
+                                                                                buttonColor: AppColors().maincolor,
+                                                                                buttonText: 'Learn More',
+                                                                                ontap: () {
+                                                                                  launchUrl(_url);
+                                                                                }),
+                                                                          ],
+                                                                        );
+                                                                      });
+                                                                },
+                                                                icon: Icon(
+                                                                  Icons.warning,
+                                                                  color: Colors
+                                                                      .red,
+                                                                ))
+                                                            : IconButton(
+                                                                onPressed: () {
+                                                                  showoptiondialog(
+                                                                      index,
+                                                                      snapshot,
+                                                                      isdisabled,
+                                                                      roles,
+                                                                      userId);
+                                                                },
+                                                                icon: Icon(
+                                                                  Icons
+                                                                      .more_horiz,
+                                                                  size: 40,
+                                                                  color: AppColors()
+                                                                      .secondcolor,
+                                                                ))
+                                                      ])
+                                                    ],
+                                                  ),
+                                                );
+                                              }),
+                                        );
+                                      }
+                                      if (snapshot.hasError) {
+                                        return Center(
+                                          child:
+                                              Text('There is something wrong!'),
+                                        );
+                                      }
 
-                                  return const Center(
-                                    child: CircularProgressIndicator(),
-                                  );
-                                })
-                          ],
+                                      return const Center(
+                                        child: CircularProgressIndicator(),
+                                      );
+                                    })
+                              ],
+                            ),
+                          ),
                         )
                       : SizedBox(),
                   searchbuttontapped == true
@@ -443,14 +496,14 @@ class _UserDataState extends State<UserData> {
                                             .doc(userid)
                                             .update({'role': 'admin'});
                                       } on Exception catch (e) {
-                                        print(e.toString());
+                                        return;
                                       }
                                       setState(() {
                                         rolevalue = val!;
                                       });
                                       setState(() {
-  userbox.put('UserRole', 'admin');
-});
+                                        userbox.put('UserRole', 'admin');
+                                      });
                                     }
                                     if (rolevalue == true) {
                                       setState(() {
@@ -464,14 +517,14 @@ class _UserDataState extends State<UserData> {
                                             .doc(userid)
                                             .update({'role': 'user'});
                                       } on Exception catch (e) {
-                                        print(e.toString());
+                                        return;
                                       }
                                       setState(() {
                                         rolevalue = false;
                                       });
                                       setState(() {
-  userbox.put('UserRole', 'user');
-});
+                                        userbox.put('UserRole', 'user');
+                                      });
                                     }
                                   },
                                 ),
@@ -489,14 +542,14 @@ class _UserDataState extends State<UserData> {
                                             .doc(userid)
                                             .update({'role': 'user'});
                                       } on Exception catch (e) {
-                                        print(e.toString());
+                                        return;
                                       }
                                       setState(() {
                                         userolevalue = val!;
                                       });
                                       setState(() {
-  userbox.put('UserRole', 'user');
-});
+                                        userbox.put('UserRole', role);
+                                      });
                                     }
                                     if (userolevalue == true) {
                                       setState(() {
@@ -510,14 +563,14 @@ class _UserDataState extends State<UserData> {
                                             .doc(userid)
                                             .update({'role': 'admin'});
                                       } on Exception catch (e) {
-                                        print(e.toString());
+                                        return;
                                       }
                                       setState(() {
                                         userolevalue = false;
                                       });
                                       setState(() {
-  userbox.put('UserRole', 'admin');
-});
+                                        userbox.put('UserRole', role);
+                                      });
                                     }
                                   },
                                 ),

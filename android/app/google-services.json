@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "434262526780",
+    "project_id": "somcabledatabase",
+    "storage_bucket": "somcabledatabase.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:434262526780:android:5444075b9ac4d105ff6c39",
+        "android_client_info": {
+          "package_name": "com.example.somcable_web_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "434262526780-oempecn904i0v38befn1ij1lg6f3m95o.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyClYjs_wPQ9KHal4nBDrAYfd1l6iVT5m5w"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "434262526780-oempecn904i0v38befn1ij1lg6f3m95o.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

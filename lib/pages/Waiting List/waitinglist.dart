@@ -19,6 +19,7 @@ class WaitaingList extends StatefulWidget {
 class _WaitaingListState extends State<WaitaingList> {
   Timer? timer;
   var userbox = Hive.box('Role');
+  var usernames = Hive.box('UsersName');
   @override
   void initState() {
     // TODO: implement initState
@@ -32,6 +33,8 @@ class _WaitaingListState extends State<WaitaingList> {
         .doc(FirebaseAuth.instance.currentUser?.uid)
         .get();
     if (data.get('IsApproved') == 'accepted') {
+        userbox.put('UserRole', data.get('role'));
+          usernames.put('UsersName', data.get('First Name'));
         Navigator.push(
             context, MaterialPageRoute(builder: (context) => AdminDashboard()));
         timer?.cancel();
@@ -66,6 +69,10 @@ class _WaitaingListState extends State<WaitaingList> {
               ontap: () {
                 Navigator.pop(context);
                 timer?.cancel();
+                
+                FirebaseAuth.instance.signOut();
+                userbox.put('UserRole', '');
+          usernames.put('UsersName', '');
               })
         ],
       ),

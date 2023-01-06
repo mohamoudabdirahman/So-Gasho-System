@@ -4,11 +4,11 @@ import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:grouped_list/grouped_list.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:somcable_web_app/colors/Colors.dart';
 import 'package:somcable_web_app/userDatabase/userModel.dart';
+import 'package:somcable_web_app/utils/Buttons.dart';
 
 class Messenger extends StatefulWidget {
   const Messenger({Key? key}) : super(key: key);
@@ -20,9 +20,11 @@ class Messenger extends StatefulWidget {
 class _MessengerState extends State<Messenger> {
   TextEditingController messageController = TextEditingController();
   var namebox = Hive.box('UsersName');
+  var userrole = Hive.box('Role');
   var timer;
   var timers;
   var istimeout = false;
+  var streamMessages;
   List randomizedColors = [
     AppColors().maincolor,
     AppColors().secondcolor,
@@ -42,49 +44,11 @@ class _MessengerState extends State<Messenger> {
 
   @override
   void initState() {
+    streamMessages =
+        FirebaseFirestore.instance.collection('Messages').snapshots();
+
     // TODO: implement initState
     super.initState();
-
-   // messengerTimer();
-  }
-
-  void mtimer() {
-    var datas = FirebaseFirestore.instance.collection('Messages').get().then(
-      (value) {
-        for (var document in value.docs) {
-          if (document.data().isNotEmpty && istimeout == true) {
-            document.reference.delete();
-            setState(() {
-              istimeout = false;
-            });
-          } else {
-            print('there is no data anymore');
-          }
-          break;
-        }
-      },
-    );
-  }
-
-  void messengerTimer() {
-    timer = Timer.periodic(const Duration(seconds: 0), (_) {
-      var datas = FirebaseFirestore.instance.collection('Messages').get().then(
-        (value) {
-          
-          for (var document in value.docs) {
-            if (document.data().isNotEmpty) {
-              document.reference.delete();
-            } else {
-              print('there is no data anymore');
-            }
-            break;
-          }
-        },
-      );
-     
-
-      //setState(() {});
-    });
   }
 
   @override
@@ -111,33 +75,71 @@ class _MessengerState extends State<Messenger> {
                 top: 5,
               ),
               child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Align(
-                      alignment: Alignment.centerLeft,
-                      child: Image.asset('lib/images/so logo.png')),
-                  SizedBox(
-                    width: 15.0,
+                  Row(
+                    children: [
+                      Align(
+                          alignment: Alignment.centerLeft,
+                          child: Image.asset('lib/images/so logo.png')),
+                      SizedBox(
+                        width: 15.0,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(5.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Rank Team',
+                              style: TextStyle(
+                                  fontSize: 40,
+                                  color: AppColors().maincolor,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                            Text(
+                              'Messenger Group Chat',
+                              style: TextStyle(
+                                fontSize: 18,
+                                color: AppColors().greycolor,
+                              ),
+                            )
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
                   Padding(
-                    padding: const EdgeInsets.all(5.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Rank Team',
-                          style: TextStyle(
-                              fontSize: 40,
-                              color: AppColors().maincolor,
-                              fontWeight: FontWeight.bold),
-                        ),
-                        Text(
-                          'Messenger Group Chat',
-                          style: TextStyle(
-                            fontSize: 18,
-                            color: AppColors().greycolor,
-                          ),
-                        )
-                      ],
+                    padding: const EdgeInsets.only(right: 25),
+                    child: Visibility(
+                      visible: userrole.get('UserRole') == 'databaseAdmin'
+                          ? true
+                          : false,
+                      child: Container(
+                        width: 120,
+                        child: Buttons(
+                          buttonColor: AppColors().maincolor,
+                            buttonText: 'Delete Chat',
+                            ontap: () {
+                              try {
+                    FirebaseFirestore.instance
+                          .collection('Messages')
+                          .get()
+                          .then((value) {
+                        for (DocumentSnapshot ds in value.docs) {
+                          ds.reference.delete();
+                        }
+                    });
+                    } on Exception catch (e) {
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                              backgroundColor: AppColors().thirdcolor,
+                              content: Text(e.toString(),
+                                  style: TextStyle(
+                                    color: AppColors().fifthcolor,
+                                  ))));
+                    }
+                            }),
+                      ),
                     ),
                   )
                 ],
@@ -149,9 +151,7 @@ class _MessengerState extends State<Messenger> {
           child: Container(
             width: MediaQuery.of(context).size.width - 117,
             child: StreamBuilder(
-                stream: FirebaseFirestore.instance
-                    .collection('Messages')
-                    .snapshots(),
+                stream: streamMessages,
                 builder: (BuildContext context,
                     AsyncSnapshot<QuerySnapshot> snapshot) {
                   if (snapshot.hasData && snapshot.data!.docs.isEmpty) {
@@ -173,6 +173,7 @@ class _MessengerState extends State<Messenger> {
                       ],
                     );
                   }
+
                   if (snapshot.hasData) {
                     return GroupedListView(
                       reverse: true,
@@ -249,7 +250,7 @@ class _MessengerState extends State<Messenger> {
                                     ),
                                     child: Padding(
                                       padding: const EdgeInsets.all(12.0),
-                                      child: Text(
+                                      child: SelectableText(
                                         '${index.get('Message')}',
                                         style: TextStyle(
                                             color: index.get('sentBy') ==
@@ -370,20 +371,31 @@ class _MessengerState extends State<Messenger> {
   }
 
   sendingmessage() async {
-    if (messageController.text.isNotEmpty) {
-      String? docid =
-          FirebaseFirestore.instance.collection('Messages').doc().id;
-      await FirebaseFirestore.instance.collection('Messages').doc(docid).set({
-        'SentByMe': FirebaseAuth.instance.currentUser!.uid ==
-                FirebaseAuth.instance.currentUser!.uid
-            ? true
-            : false,
-        'Sender': FirebaseAuth.instance.currentUser!.uid,
-        'Message': messageController.text,
-        'DateTime': DateTime.now(),
-        'sentBy': namebox.get('UsersName'),
-        'doc': docid
-      });
+    try {
+      if (messageController.text.isNotEmpty) {
+        String? docid =
+            FirebaseFirestore.instance.collection('Messages').doc().id;
+        FirebaseFirestore.instance.collection('Messages').doc(docid).set({
+          'SentByMe': FirebaseAuth.instance.currentUser!.uid ==
+                  FirebaseAuth.instance.currentUser!.uid
+              ? true
+              : false,
+          'Sender': FirebaseAuth.instance.currentUser!.uid,
+          'Message': messageController.text,
+          'DateTime': DateTime.now(),
+          'sentBy': namebox.get('UsersName'),
+          'TimerToDelete': DateTime.now().add(Duration(hours: 24)),
+          'doc': docid
+        });
+      }
+    } on Exception catch (e) {
+      // TODO
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          backgroundColor: AppColors().thirdcolor,
+          content: Text(e.toString(),
+              style: TextStyle(
+                color: AppColors().fifthcolor,
+              ))));
     }
   }
 }

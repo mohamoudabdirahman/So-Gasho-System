@@ -13,11 +13,13 @@ class SiteTextfield extends StatelessWidget {
     return Padding(
         padding: const EdgeInsets.all(8.0),
         child: TextField(
-          
+          autofocus: true,
           onChanged: onchange,
           decoration: InputDecoration(
+            
             contentPadding: EdgeInsets.all(0),
             hintText: hinText,
+            hintStyle: TextStyle(color: AppColors().darkwhite),
             focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(8),
                 borderSide: BorderSide(

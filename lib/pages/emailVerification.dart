@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:somcable_web_app/colors/Colors.dart';
@@ -80,6 +81,10 @@ class _EmailVerificationPageState extends State<EmailVerificationPage> {
     });
 
     if (isverified) {
+      FirebaseFirestore.instance.collection('Users').doc(FirebaseAuth.instance.currentUser!.uid).update({
+        'IsVerified' : true
+      });
+      
       timer?.cancel();
       Navigator.push(
           context, MaterialPageRoute(builder: ((context) => WaitaingList())));
